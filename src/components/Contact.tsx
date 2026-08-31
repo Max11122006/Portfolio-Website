@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FadeIn } from "./MotionPrimitives";
+import { SOCIAL, CV } from "@/lib/links";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -96,6 +97,9 @@ export default function Contact() {
                 </label>
                 <input
                   type="text"
+                  name="name"
+                  autoComplete="name"
+                  required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-background border border-border rounded-lg px-4 py-3 text-foreground text-sm placeholder-muted/50 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors"
@@ -110,6 +114,9 @@ export default function Contact() {
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
+                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-background border border-border rounded-lg px-4 py-3 text-foreground text-sm placeholder-muted/50 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors"
@@ -124,6 +131,8 @@ export default function Contact() {
                 </label>
                 <textarea
                   rows={4}
+                  name="message"
+                  required
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   className="w-full bg-background border border-border rounded-lg px-4 py-3 text-foreground text-sm placeholder-muted/50 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors resize-none"
@@ -172,19 +181,29 @@ export default function Contact() {
             {/* Links */}
             <div className="flex items-center justify-center gap-6 mt-8 pt-6 border-t border-border-light">
               <a
-                href="mailto:hello@mdubowski.com"
+                href={SOCIAL.email}
                 className="text-sm text-muted hover:text-accent transition-colors"
               >
                 Email
               </a>
               <span className="w-px h-4 bg-border" />
               <a
-                href="https://linkedin.com"
+                href={SOCIAL.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-muted hover:text-accent transition-colors"
               >
                 LinkedIn
+              </a>
+              <span className="w-px h-4 bg-border" />
+              <a
+                href={CV.href}
+                download={CV.downloadName}
+                target="_blank"
+                rel="noopener"
+                className="text-sm text-muted hover:text-accent transition-colors"
+              >
+                Download CV
               </a>
             </div>
           </div>

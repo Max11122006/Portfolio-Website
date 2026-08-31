@@ -1,6 +1,7 @@
 "use client";
 
 import { FadeIn } from "./MotionPrimitives";
+import { SOCIAL } from "@/lib/links";
 
 export default function Footer() {
   return (
@@ -14,9 +15,9 @@ export default function Footer() {
 
           <div className="flex items-center gap-5">
             {[
-              { label: "LinkedIn", href: "https://linkedin.com" },
-              { label: "GitHub", href: "https://github.com" },
-              { label: "Email", href: "mailto:hello@mdubowski.com" },
+              { label: "LinkedIn", href: SOCIAL.linkedin },
+              { label: "GitHub", href: SOCIAL.github },
+              { label: "Email", href: SOCIAL.email },
             ].map((link) => (
               <a
                 key={link.label}

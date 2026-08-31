@@ -110,7 +110,7 @@ export const allProjects: Project[] = [
     tags: ["Web Development", "UI Design", "HTML", "CSS", "JavaScript"],
     image: "/projects/portfolio-website.jpg",
     status: "completed",
-    github: "https://github.com/Max11122006/Portfolio-Wesbite",
+    github: "https://github.com/Max11122006/Portfolio-Website",
   },
 ];
 

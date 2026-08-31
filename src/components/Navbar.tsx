@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CV } from "@/lib/links";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -81,6 +82,18 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          {/* CV — the most-wanted link on an internship portfolio */}
+          <span className="w-px h-4 bg-border mx-1" />
+          <a
+            href={CV.href}
+            download={CV.downloadName}
+            target="_blank"
+            rel="noopener"
+            className="px-3 py-1.5 text-[13px] text-muted hover:text-foreground transition-colors duration-200 rounded-md"
+          >
+            CV
+          </a>
         </div>
 
         {/* Mobile hamburger + CTA */}
@@ -157,6 +170,16 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <a
+            href={CV.href}
+            download={CV.downloadName}
+            target="_blank"
+            rel="noopener"
+            onClick={() => setMobileOpen(false)}
+            className="block py-2 text-sm text-muted hover:text-foreground"
+          >
+            Download CV
+          </a>
         </motion.div>
       )}
     </motion.nav>

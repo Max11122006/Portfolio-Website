@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useEffect } from "react";
 import SolariBoard from "./SolariBoard";
+import { SOCIAL } from "@/lib/links";
 
 const PLANE_SVG = (
   <>
@@ -194,7 +195,7 @@ export default function Hero() {
           className="flex items-center justify-center gap-3 mt-6"
         >
           <a
-            href="https://github.com/Max11122006"
+            href={SOCIAL.github}
             target="_blank"
             rel="noopener noreferrer"
             className="w-10 h-10 flex items-center justify-center rounded-full border border-border text-muted hover:border-foreground/30 hover:text-foreground transition-colors"
@@ -205,7 +206,7 @@ export default function Hero() {
             </svg>
           </a>
           <a
-            href="https://www.linkedin.com/in/maksymilian-dubowski/"
+            href={SOCIAL.linkedin}
             target="_blank"
             rel="noopener noreferrer"
             className="w-10 h-10 flex items-center justify-center rounded-full border border-border text-muted hover:border-foreground/30 hover:text-foreground transition-colors"

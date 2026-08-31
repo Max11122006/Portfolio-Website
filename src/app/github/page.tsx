@@ -59,13 +59,13 @@ const repos: Repo[] = [
   },
   {
     id: 4,
-    name: "Portfolio-Wesbite",
+    name: "Portfolio-Website",
     description: "Aerospace-themed engineering portfolio built with Next.js, Tailwind CSS, Framer Motion, and Three.js.",
     category: "personal",
     language: "TypeScript",
     languageColor: "#3178c6",
     topics: ["nextjs", "portfolio", "threejs", "tailwind"],
-    url: "https://github.com/Max11122006/Portfolio-Wesbite",
+    url: "https://github.com/Max11122006/Portfolio-Website",
     lastUpdated: "2026-03",
   },
 
