@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import type { ProjectSection } from "@/data/projectDetails";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -13,6 +13,7 @@ export default function ProjectAccordion({
   sections: ProjectSection[];
 }) {
   const [openSet, setOpenSet] = useState<Set<string>>(new Set());
+  const reduceMotion = useReducedMotion();
 
   const toggle = (title: string) => {
     setOpenSet((prev) => {
@@ -66,7 +67,7 @@ export default function ProjectAccordion({
               {isOpen && (
                 <motion.div
                   key="content"
-                  initial={{ height: 0, opacity: 0 }}
+                  initial={reduceMotion ? false : { height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.4, ease: EASE }}

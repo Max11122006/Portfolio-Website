@@ -36,7 +36,7 @@ export default function PersonalProjectsPage() {
           >
             {allProjects.map((project) => (
               <StaggerItem key={project.id}>
-                <ProjectCard project={project} />
+                <ProjectCard project={project} headingLevel={2} />
               </StaggerItem>
             ))}
           </StaggerContainer>

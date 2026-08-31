@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { useRef, useEffect } from "react";
 import SolariBoard from "./SolariBoard";
 import { SOCIAL } from "@/lib/links";
@@ -104,6 +104,11 @@ export default function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
+  const reduceMotion = useReducedMotion();
+  // initial={false} renders straight at the animate target: no fade, and no
+  // waiting out a delay of up to 2.4s before the content appears.
+  const enter = (from: Record<string, number>) => (reduceMotion ? false : { opacity: 0, ...from });
+
   return (
     <section
       ref={containerRef}
@@ -114,13 +119,17 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-white via-background to-background" />
         <div className="absolute inset-0 schematic-grid opacity-40" />
         <motion.div
-          animate={{
-            background: [
-              "radial-gradient(ellipse 70% 40% at 50% 45%, rgba(45,106,79,0.05) 0%, transparent 70%)",
-              "radial-gradient(ellipse 60% 50% at 55% 50%, rgba(45,106,79,0.08) 0%, transparent 70%)",
-              "radial-gradient(ellipse 70% 40% at 45% 45%, rgba(45,106,79,0.05) 0%, transparent 70%)",
-            ],
-          }}
+          animate={
+            reduceMotion
+              ? undefined
+              : {
+                  background: [
+                    "radial-gradient(ellipse 70% 40% at 50% 45%, rgba(45,106,79,0.05) 0%, transparent 70%)",
+                    "radial-gradient(ellipse 60% 50% at 55% 50%, rgba(45,106,79,0.08) 0%, transparent 70%)",
+                    "radial-gradient(ellipse 70% 40% at 45% 45%, rgba(45,106,79,0.05) 0%, transparent 70%)",
+                  ],
+                }
+          }
           transition={{
             duration: 12,
             repeat: Infinity,
@@ -133,32 +142,46 @@ export default function Hero() {
 
       {/* Background aircraft — full viewport width, clipped to hero section */}
       <div className="absolute inset-0 overflow-hidden">
-        <DriftingPlane direction="ltr" duration={18} size={48} opacity={0.40} containerRef={containerRef} />
-        <DriftingPlane direction="rtl" duration={22} size={36} opacity={0.32} containerRef={containerRef} />
+        {!reduceMotion && (
+          <>
+            <DriftingPlane direction="ltr" duration={18} size={48} opacity={0.40} containerRef={containerRef} />
+            <DriftingPlane direction="rtl" duration={22} size={36} opacity={0.32} containerRef={containerRef} />
+          </>
+        )}
       </div>
 
       {/* Content */}
       <motion.div
-        style={{ y, opacity }}
+        // Scroll-linked parallax is a vestibular trigger; hold the hero still.
+        style={reduceMotion ? undefined : { y, opacity }}
         className="relative z-10 text-center px-4 max-w-5xl mx-auto flex flex-col items-center"
       >
-        {/* Solari Board */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <SolariBoard
-            rows={[
-              { text: "MAKSYMILIAN DUBOWSKI", color: "white" },
-              { text: "BENG AEROSPACE ENGINEERING", color: "amber" },
-            ]}
-          />
-        </motion.div>
+        {/* Solari Board — the page's h1. The name exists as real text for search
+            engines and screen readers; the flip tiles are decorative, and are
+            hidden from assistive tech so the name isn't read letter by letter. */}
+        <h1>
+          <span className="sr-only">
+            Maksymilian Dubowski — BEng Aerospace Engineering, Edinburgh
+          </span>
+          <motion.span
+            aria-hidden="true"
+            className="block"
+            initial={enter({ scale: 0.97 })}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <SolariBoard
+              rows={[
+                { text: "MAKSYMILIAN DUBOWSKI", color: "white" },
+                { text: "BENG AEROSPACE ENGINEERING", color: "amber" },
+              ]}
+            />
+          </motion.span>
+        </h1>
 
         {/* Location tag */}
         <motion.p
-          initial={{ opacity: 0, y: 10 }}
+          initial={enter({ y: 10 })}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.8, ease: [0.22, 1, 0.36, 1] }}
           className="text-xs tracking-[0.25em] uppercase text-muted mt-10 mb-8 font-mono"
@@ -168,7 +191,7 @@ export default function Hero() {
 
         {/* CTA Buttons */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={enter({ y: 10 })}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 2.1, ease: [0.22, 1, 0.36, 1] }}
           className="flex items-center justify-center gap-4"
@@ -189,7 +212,7 @@ export default function Hero() {
 
         {/* Social Links */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={enter({ y: 10 })}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 2.4, ease: [0.22, 1, 0.36, 1] }}
           className="flex items-center justify-center gap-3 mt-6"
@@ -221,13 +244,13 @@ export default function Hero() {
 
       {/* Scroll cue */}
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2.8, duration: 0.8 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
         <motion.div
-          animate={{ y: [0, 6, 0] }}
+          animate={reduceMotion ? undefined : { y: [0, 6, 0] }}
           transition={{
             duration: 2.5,
             repeat: Infinity,

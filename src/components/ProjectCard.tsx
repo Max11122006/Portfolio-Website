@@ -8,7 +8,16 @@ import { type Project, WIRE_COLORS } from "@/data/projects";
 const LINK_CLASS =
   "inline-flex items-center gap-1.5 py-2.5 text-xs font-mono tracking-wide uppercase text-accent rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface";
 
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({
+  project,
+  headingLevel = 3,
+}: {
+  project: Project;
+  /** 3 under a section heading (home page), 2 where cards sit directly under the h1. */
+  headingLevel?: 2 | 3;
+}) {
+  const Heading = headingLevel === 2 ? "h2" : "h3";
+
   return (
     <div className="group relative h-full">
       <BreadboardCard className="h-full" hover>
@@ -28,9 +37,9 @@ export default function ProjectCard({ project }: { project: Project }) {
             {project.category}
           </p>
 
-          <h3 className="text-lg font-semibold text-foreground mb-3 leading-snug">
+          <Heading className="text-lg font-semibold text-foreground mb-3 leading-snug">
             {project.title}
-          </h3>
+          </Heading>
 
           <p className="text-sm text-muted leading-relaxed mb-4">
             {project.description}

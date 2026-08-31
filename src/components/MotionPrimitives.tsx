@@ -1,6 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+
+/* Under reduced motion these render as plain elements in their final state.
+   The CSS media query can't help here: the hidden state is an inline
+   opacity:0 written by JS, so it has to be skipped rather than sped up. */
 
 const transition = {
   duration: 0.8,
@@ -18,6 +22,8 @@ export function FadeIn({
   direction?: "up" | "down" | "left" | "right" | "none";
   className?: string;
 }) {
+  const reduceMotion = useReducedMotion();
+
   const directionMap = {
     up: { y: 40 },
     down: { y: -40 },
@@ -25,6 +31,8 @@ export function FadeIn({
     right: { x: -40 },
     none: {},
   };
+
+  if (reduceMotion) return <div className={className}>{children}</div>;
 
   return (
     <motion.div
@@ -48,6 +56,9 @@ export function ScaleIn({
   delay?: number;
   className?: string;
 }) {
+  const reduceMotion = useReducedMotion();
+  if (reduceMotion) return <div className={className}>{children}</div>;
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -70,6 +81,9 @@ export function StaggerContainer({
   className?: string;
   staggerDelay?: number;
 }) {
+  const reduceMotion = useReducedMotion();
+  if (reduceMotion) return <div className={className}>{children}</div>;
+
   return (
     <motion.div
       initial="hidden"
@@ -97,6 +111,9 @@ export function StaggerItem({
   children: React.ReactNode;
   className?: string;
 }) {
+  const reduceMotion = useReducedMotion();
+  if (reduceMotion) return <div className={className}>{children}</div>;
+
   return (
     <motion.div
       variants={{
