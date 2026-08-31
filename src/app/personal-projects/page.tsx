@@ -35,8 +35,8 @@ export default function PersonalProjectsPage() {
             staggerDelay={0.08}
           >
             {allProjects.map((project) => (
-              <StaggerItem key={project.id}>
-                <ProjectCard project={project} headingLevel={2} />
+              <StaggerItem key={project.slug}>
+                <ProjectCard project={project} headingLevel={2} showDepth />
               </StaggerItem>
             ))}
           </StaggerContainer>

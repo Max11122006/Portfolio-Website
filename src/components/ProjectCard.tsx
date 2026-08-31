@@ -3,20 +3,43 @@
 import Link from "next/link";
 import Image from "next/image";
 import BreadboardCard from "./BreadboardCard";
-import { type Project, WIRE_COLORS } from "@/data/projects";
+import CopyGap from "./CopyGap";
+import { type Project, WIRE_COLORS, isPlaceholder } from "@/data/projects";
 
 const LINK_CLASS =
   "inline-flex items-center gap-1.5 py-2.5 text-xs font-mono tracking-wide uppercase text-accent rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface";
 
+const ARROW = (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2.5 6h7M6.5 3l3 3-3 3" />
+  </svg>
+);
+
+/** The three deeper beats, shown only on the workshop. */
+const DEPTH: { key: "problem" | "approach" | "outcome"; label: string }[] = [
+  { key: "problem", label: "Problem" },
+  { key: "approach", label: "Approach" },
+  { key: "outcome", label: "Outcome" },
+];
+
 export default function ProjectCard({
   project,
   headingLevel = 3,
+  showDepth = false,
 }: {
   project: Project;
   /** 3 under a section heading (home page), 2 where cards sit directly under the h1. */
   headingLevel?: 2 | 3;
+  /** Workshop only — adds the collapsible problem/approach/outcome block. */
+  showDepth?: boolean;
 }) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
+
+  // While `hook` is still a placeholder, fall back to the existing approved
+  // description rather than showing a gap where real copy already exists.
+  // Remove the fallback (and Project.description) once the hooks are written.
+  const hookIsReal = !isPlaceholder(project.hook);
+  const hookText = hookIsReal ? project.hook : project.description;
 
   return (
     <div className="group relative h-full">
@@ -26,15 +49,18 @@ export default function ProjectCard({
           <div className="relative aspect-[16/9] w-full mb-6 overflow-hidden rounded-md border border-border bg-surface-alt">
             <Image
               src={project.image}
-              alt={project.title}
+              alt={project.imageAlt}
               fill
               className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
               sizes="(min-width: 1200px) 500px, (min-width: 768px) calc(50vw - 5rem), calc(100vw - 6.5rem)"
             />
           </div>
 
+          {/* Eyebrow: category · date */}
           <p className="text-[11px] tracking-[0.2em] uppercase text-accent/70 font-medium mb-4">
             {project.category}
+            <span className="mx-2 text-muted/50">·</span>
+            {isPlaceholder(project.date) ? <CopyGap text={project.date} /> : project.date}
           </p>
 
           <Heading className="text-lg font-semibold text-foreground mb-3 leading-snug">
@@ -42,7 +68,7 @@ export default function ProjectCard({
           </Heading>
 
           <p className="text-sm text-muted leading-relaxed mb-4">
-            {project.description}
+            {hookText ?? <CopyGap text={project.hook} />}
           </p>
 
           <div className="flex flex-wrap gap-2 mt-auto">
@@ -56,6 +82,34 @@ export default function ProjectCard({
             ))}
           </div>
 
+          {/* Workshop depth — collapsed by default so the grid doesn't break */}
+          {showDepth && (
+            <details className="relative z-10 mt-6 group/details">
+              <summary className="cursor-pointer list-none text-xs font-mono tracking-wide uppercase text-muted hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm py-1">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="transition-transform group-open/details:rotate-90">›</span>
+                  Read the write-up
+                </span>
+              </summary>
+              <dl className="mt-4 space-y-4">
+                {DEPTH.map(({ key, label }) => (
+                  <div key={key}>
+                    <dt className="text-[11px] tracking-[0.2em] uppercase text-accent/70 font-medium mb-1">
+                      {label}
+                    </dt>
+                    <dd className="text-sm text-muted leading-relaxed">
+                      {isPlaceholder(project[key]) ? (
+                        <CopyGap text={project[key]} />
+                      ) : (
+                        project[key]
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </details>
+          )}
+
           {/* Links — always rendered, tappable without hover */}
           <div className="flex items-center gap-5 mt-6 pt-1.5 border-t border-border-light">
             {/* The ::after stretches this link over the whole card, so the card
@@ -65,14 +119,25 @@ export default function ProjectCard({
               className={`${LINK_CLASS} after:absolute after:inset-0 after:content-['']`}
             >
               View Project
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2.5 6h7M6.5 3l3 3-3 3" />
-              </svg>
+              {ARROW}
             </Link>
 
-            {project.github && (
+            {project.links.demo && (
               <a
-                href={project.github}
+                href={project.links.demo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${LINK_CLASS} relative z-10`}
+                aria-label={`${project.title} live demo`}
+              >
+                Demo
+                {ARROW}
+              </a>
+            )}
+
+            {project.links.repo && (
+              <a
+                href={project.links.repo}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`${LINK_CLASS} relative z-10`}

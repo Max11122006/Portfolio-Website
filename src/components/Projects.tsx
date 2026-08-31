@@ -33,7 +33,7 @@ export default function Projects() {
           staggerDelay={0.1}
         >
           {selectedProjects.map((project) => (
-            <StaggerItem key={project.id}>
+            <StaggerItem key={project.slug}>
               <ProjectCard project={project} />
             </StaggerItem>
           ))}
