@@ -163,7 +163,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 1.8, ease: [0.22, 1, 0.36, 1] }}
           className="text-xs tracking-[0.25em] uppercase text-muted mt-10 mb-8 font-mono"
         >
-          // Edinburgh, Scotland
+          {"// Edinburgh, Scotland"}
         </motion.p>
 
         {/* CTA Buttons */}

@@ -329,7 +329,7 @@ export default function Interactive3D() {
       <div className="absolute inset-0 bg-gradient-to-b from-background via-surface-alt/30 to-background pointer-events-none" />
       <div className="relative z-10 px-6 max-w-6xl mx-auto">
         <p className="text-xs tracking-[0.25em] uppercase text-muted mb-6 font-mono">
-          // SKILLS
+          {"// SKILLS"}
         </p>
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15] text-foreground mb-3">
           Engineering <span className="text-accent">Stack.</span>

@@ -15,7 +15,7 @@ export default function Projects() {
       <div className="relative max-w-6xl mx-auto">
         <FadeIn>
           <p className="text-xs tracking-[0.25em] uppercase text-muted mb-6 font-mono">
-            // PROJECTS
+            {"// PROJECTS"}
           </p>
         </FadeIn>
 

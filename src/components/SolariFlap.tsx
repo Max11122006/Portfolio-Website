@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789—·/ ";
 
@@ -17,45 +17,46 @@ export default function SolariFlap({ targetChar, delay, color = "white" }: Solar
   const cyclesLeft = useRef(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const flipNext = useCallback(() => {
-    cyclesLeft.current--;
-    const next =
-      cyclesLeft.current <= 0
-        ? targetChar
-        : CHARS[Math.floor(Math.random() * CHARS.length)];
-
-    setNextChar(next);
-    setFlipPhase("top-out");
-
-    // Top half folds down
-    timeoutRef.current = setTimeout(() => {
-      setCurrentChar(next);
-      setFlipPhase("bottom-in");
-
-      // Bottom half folds in
-      timeoutRef.current = setTimeout(() => {
-        setFlipPhase("idle");
-
-        if (cyclesLeft.current > 0) {
-          const speed = 40 + cyclesLeft.current * 10;
-          timeoutRef.current = setTimeout(() => flipNext(), speed);
-        }
-      }, 120);
-    }, 120);
-  }, [targetChar]);
-
   useEffect(() => {
+    // Declared inside the effect so the recursive call below is a plain hoisted
+    // function reference. As a useCallback it referenced its own binding before
+    // initialisation, which never picks up a changed targetChar.
+    function flipNext() {
+      cyclesLeft.current--;
+      const next =
+        cyclesLeft.current <= 0
+          ? targetChar
+          : CHARS[Math.floor(Math.random() * CHARS.length)];
+
+      setNextChar(next);
+      setFlipPhase("top-out");
+
+      // Top half folds down
+      timeoutRef.current = setTimeout(() => {
+        setCurrentChar(next);
+        setFlipPhase("bottom-in");
+
+        // Bottom half folds in
+        timeoutRef.current = setTimeout(() => {
+          setFlipPhase("idle");
+
+          if (cyclesLeft.current > 0) {
+            const speed = 40 + cyclesLeft.current * 10;
+            timeoutRef.current = setTimeout(flipNext, speed);
+          }
+        }, 120);
+      }, 120);
+    }
+
     const totalCycles = 2 + Math.floor(Math.random() * 2);
     cyclesLeft.current = totalCycles;
 
-    timeoutRef.current = setTimeout(() => {
-      flipNext();
-    }, delay);
+    timeoutRef.current = setTimeout(flipNext, delay);
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [delay, flipNext]);
+  }, [delay, targetChar]);
 
   const textColor = color === "amber" ? "#FFBB33" : "#F0F0F0";
 

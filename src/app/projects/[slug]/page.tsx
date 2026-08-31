@@ -48,7 +48,7 @@ export default async function ProjectPage({
       {/* ── Hero ── */}
       <section className="px-6 pt-16 pb-12 max-w-5xl mx-auto">
         <p className="text-xs tracking-[0.25em] uppercase text-muted mb-4 font-mono">
-          // {project.category}
+          {`// ${project.category}`}
         </p>
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1] text-foreground mb-6">
           {project.title}
