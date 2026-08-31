@@ -176,17 +176,61 @@ const STREAMLINES = STREAMLINE_DEFS.map((s) => ({
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
+// Streamlines are generated from x=-80 to x=1350, which overhangs the
+// 0–1200 viewBox at both ends. A label anchored out there is clipped by the
+// SVG viewport — "Mechanical Prototyping" rendered as "…thanical Prototyping".
+// Fade each label on its x position, allowing for its own half-width, so it is
+// never visible while any part of it sits outside the viewBox.
+const VIEW_W = 1200;
+const EDGE_PAD = 6;
+const FADE_SPAN = 45;
+const LABEL_FONT_SIZE = 13;
+
+// getBBox() cannot be trusted on first paint: until hydration moves the section
+// out of React's hidden streaming container — or until webfonts settle — it
+// reports 0, which would leave the widest label unprotected and reintroduce the
+// clipping. Start from a character-count estimate that needs no layout, then
+// adopt the real measurement once the element is actually laid out.
+// 0.30 em/char deliberately overshoots Inter's real average advance, so the
+// transient estimate fades a label slightly early rather than clipping it.
+const estimateHalfWidth = (skill: string) => skill.length * LABEL_FONT_SIZE * 0.3;
+
 function StreamlineSkills() {
   const svgRef = useRef<SVGSVGElement>(null);
   const textRefs = useRef<(SVGTextElement | null)[]>([]);
   const pathRefs = useRef<(SVGPathElement | null)[]>([]);
+  const halfWidths = useRef<number[]>(
+    STREAMLINES.map((s) => estimateHalfWidth(s.skill))
+  );
+  const measured = useRef(false);
   const rafRef = useRef(0);
 
   useEffect(() => {
     const start = performance.now();
+    let frame = 0;
+
+    // Retry cheaply until the labels are laid out, then stop asking.
+    const tryMeasure = () => {
+      let all = true;
+      for (let i = 0; i < textRefs.current.length; i++) {
+        const el = textRefs.current[i];
+        let w = 0;
+        try {
+          w = el ? el.getBBox().width : 0;
+        } catch {
+          w = 0;
+        }
+        if (w > 0) halfWidths.current[i] = w / 2;
+        else all = false;
+      }
+      if (all) measured.current = true;
+    };
 
     const animate = (now: number) => {
       const elapsed = now - start;
+
+      if (!measured.current && frame % 30 === 0) tryMeasure();
+      frame++;
 
       for (let i = 0; i < STREAMLINES.length; i++) {
         const s = STREAMLINES[i];
@@ -208,10 +252,17 @@ function StreamlineSkills() {
           `translate(${pt.x},${pt.y}) rotate(${angle})`
         );
 
-        // Fade in/out at path edges
-        let opacity = 1;
-        if (t < 0.07) opacity = t / 0.07;
-        else if (t > 0.93) opacity = (1 - t) / 0.07;
+        // Fade in/out against the viewBox edges, not the path ends
+        const half = halfWidths.current[i] ?? 0;
+        const minX = half + EDGE_PAD;
+        const maxX = VIEW_W - half - EDGE_PAD;
+        const opacity =
+          pt.x <= minX || pt.x >= maxX
+            ? 0
+            : Math.max(
+                0,
+                Math.min(1, (pt.x - minX) / FADE_SPAN, (maxX - pt.x) / FADE_SPAN)
+              );
         textEl.setAttribute("opacity", String(opacity));
       }
 
@@ -257,7 +308,7 @@ function StreamlineSkills() {
         <text
           key={`text-${i}`}
           ref={(el) => { textRefs.current[i] = el; }}
-          fontSize="13"
+          fontSize={LABEL_FONT_SIZE}
           fill="#6b6358"
           fontFamily="var(--font-sans, system-ui, sans-serif)"
           textAnchor="middle"
@@ -278,7 +329,7 @@ export default function Interactive3D() {
       <div className="absolute inset-0 bg-gradient-to-b from-background via-surface-alt/30 to-background pointer-events-none" />
       <div className="relative z-10 px-6 max-w-6xl mx-auto">
         <p className="text-xs tracking-[0.25em] uppercase text-muted mb-6 font-mono">
-          // SKILLS
+          {"// SKILLS"}
         </p>
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15] text-foreground mb-3">
           Engineering <span className="text-accent">Stack.</span>

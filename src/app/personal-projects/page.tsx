@@ -17,7 +17,7 @@ export default function PersonalProjectsPage() {
         <div className="relative max-w-6xl mx-auto">
           <FadeIn>
             <p className="text-xs tracking-[0.25em] uppercase text-muted mb-6 font-mono">
-              // ALL_PROJECTS
+              {"// ALL_PROJECTS"}
             </p>
           </FadeIn>
 
@@ -35,8 +35,8 @@ export default function PersonalProjectsPage() {
             staggerDelay={0.08}
           >
             {allProjects.map((project) => (
-              <StaggerItem key={project.id}>
-                <ProjectCard project={project} />
+              <StaggerItem key={project.slug}>
+                <ProjectCard project={project} headingLevel={2} showDepth />
               </StaggerItem>
             ))}
           </StaggerContainer>

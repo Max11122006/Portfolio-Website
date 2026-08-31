@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { FadeIn } from "./MotionPrimitives";
 
 const TECH_TAGS = [
@@ -14,15 +15,31 @@ const TECH_TAGS = [
 ];
 
 const PHOTOS = [
-  "/about/IMG_0142.jpg",
-  "/about/IMG_1061.jpg",
-  "/about/IMG_2058.jpg",
-  "/about/IMG_5657.jpg",
+  {
+    src: "/about/IMG_0142.jpg",
+    alt: "Standing on a bridge walkway above a city river at sunset, with a flag flying and high-rise towers on the far bank.",
+  },
+  {
+    src: "/about/IMG_1061.jpg",
+    alt: "Standing at a harbour railing beside a lifebuoy, with a dense high-rise skyline and hills across the water.",
+  },
+  {
+    src: "/about/IMG_2058.jpg",
+    alt: "Following through on a golf swing on a hilltop course, with a city and distant hills spread out below.",
+  },
+  {
+    src: "/about/IMG_5657.jpg",
+    alt: "Standing at a waterfront railing at dusk, with a tour boat passing and a three-towered hotel across the bay.",
+  },
 ];
+
+/* The carousel sits in a 2-of-5 column at lg and full width below it. */
+const PHOTO_SIZES = "(min-width: 1024px) 430px, calc(100vw - 3rem)";
 
 function PhotoCarousel() {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const next = useCallback(() => setCurrent((i) => (i + 1) % PHOTOS.length), []);
   const prev = useCallback(() => setCurrent((i) => (i - 1 + PHOTOS.length) % PHOTOS.length), []);
@@ -40,16 +57,22 @@ function PhotoCarousel() {
       onMouseLeave={() => setPaused(false)}
     >
       <AnimatePresence mode="wait">
-        <motion.img
+        <motion.div
           key={current}
-          src={PHOTOS[current]}
-          alt="About photo"
-          initial={{ opacity: 0, x: 30 }}
+          initial={reduceMotion ? false : { opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -30 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -30 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+          className="absolute inset-0"
+        >
+          <Image
+            src={PHOTOS[current].src}
+            alt={PHOTOS[current].alt}
+            fill
+            sizes={PHOTO_SIZES}
+            className="object-cover"
+          />
+        </motion.div>
       </AnimatePresence>
 
       {/* Arrows */}
@@ -98,7 +121,7 @@ export default function About() {
       <div className="max-w-6xl mx-auto">
         <FadeIn>
           <p className="text-xs tracking-[0.25em] uppercase text-muted mb-6 font-mono">
-            // ABOUT
+            {"// ABOUT"}
           </p>
         </FadeIn>
 

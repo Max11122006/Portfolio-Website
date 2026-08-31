@@ -48,7 +48,7 @@ export default async function ProjectPage({
       {/* ── Hero ── */}
       <section className="px-6 pt-16 pb-12 max-w-5xl mx-auto">
         <p className="text-xs tracking-[0.25em] uppercase text-muted mb-4 font-mono">
-          // {project.category}
+          {`// ${project.category}`}
         </p>
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1] text-foreground mb-6">
           {project.title}
@@ -71,7 +71,7 @@ export default async function ProjectPage({
           <div className="w-full rounded-lg overflow-hidden border border-border bg-surface-alt mb-14">
             <Image
               src={project.heroImage}
-              alt={project.title}
+              alt={project.imageAlt}
               width={1200}
               height={900}
               className="w-full h-auto object-contain"
@@ -100,11 +100,11 @@ export default async function ProjectPage({
           <ProjectAccordion sections={detail.sections} />
 
           {/* GitHub link */}
-          {project.github && (
+          {project.links.repo && (
             <>
               <div className="w-full h-px bg-border mt-16 mb-10" />
               <a
-                href={project.github}
+                href={project.links.repo}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2.5 text-sm font-mono text-muted hover:text-accent transition-colors border border-border hover:border-accent/40 rounded-lg px-5 py-3"

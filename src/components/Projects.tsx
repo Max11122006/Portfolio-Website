@@ -15,7 +15,7 @@ export default function Projects() {
       <div className="relative max-w-6xl mx-auto">
         <FadeIn>
           <p className="text-xs tracking-[0.25em] uppercase text-muted mb-6 font-mono">
-            // PROJECTS
+            {"// PROJECTS"}
           </p>
         </FadeIn>
 
@@ -33,7 +33,7 @@ export default function Projects() {
           staggerDelay={0.1}
         >
           {selectedProjects.map((project) => (
-            <StaggerItem key={project.id}>
+            <StaggerItem key={project.slug}>
               <ProjectCard project={project} />
             </StaggerItem>
           ))}

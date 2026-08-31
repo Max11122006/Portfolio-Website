@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useReducedMotion } from "framer-motion";
 
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789—·/ ";
 
@@ -16,71 +17,81 @@ export default function SolariFlap({ targetChar, delay, color = "white" }: Solar
   const [nextChar, setNextChar] = useState(" ");
   const cyclesLeft = useRef(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const flipNext = useCallback(() => {
-    cyclesLeft.current--;
-    const next =
-      cyclesLeft.current <= 0
-        ? targetChar
-        : CHARS[Math.floor(Math.random() * CHARS.length)];
-
-    setNextChar(next);
-    setFlipPhase("top-out");
-
-    // Top half folds down
-    timeoutRef.current = setTimeout(() => {
-      setCurrentChar(next);
-      setFlipPhase("bottom-in");
-
-      // Bottom half folds in
-      timeoutRef.current = setTimeout(() => {
-        setFlipPhase("idle");
-
-        if (cyclesLeft.current > 0) {
-          const speed = 40 + cyclesLeft.current * 10;
-          timeoutRef.current = setTimeout(() => flipNext(), speed);
-        }
-      }, 120);
-    }, 120);
-  }, [targetChar]);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
+    // The flip board is the largest motion on the page; under reduced motion it
+    // never runs and the final character is shown directly (see displayChar).
+    if (reduceMotion) return;
+
+    // Declared inside the effect so the recursive call below is a plain hoisted
+    // function reference. As a useCallback it referenced its own binding before
+    // initialisation, which never picks up a changed targetChar.
+    function flipNext() {
+      cyclesLeft.current--;
+      const next =
+        cyclesLeft.current <= 0
+          ? targetChar
+          : CHARS[Math.floor(Math.random() * CHARS.length)];
+
+      setNextChar(next);
+      setFlipPhase("top-out");
+
+      // Top half folds down
+      timeoutRef.current = setTimeout(() => {
+        setCurrentChar(next);
+        setFlipPhase("bottom-in");
+
+        // Bottom half folds in
+        timeoutRef.current = setTimeout(() => {
+          setFlipPhase("idle");
+
+          if (cyclesLeft.current > 0) {
+            const speed = 40 + cyclesLeft.current * 10;
+            timeoutRef.current = setTimeout(flipNext, speed);
+          }
+        }, 120);
+      }, 120);
+    }
+
     const totalCycles = 2 + Math.floor(Math.random() * 2);
     cyclesLeft.current = totalCycles;
 
-    timeoutRef.current = setTimeout(() => {
-      flipNext();
-    }, delay);
+    timeoutRef.current = setTimeout(flipNext, delay);
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [delay, flipNext]);
+  }, [delay, targetChar, reduceMotion]);
 
   const textColor = color === "amber" ? "#FFBB33" : "#F0F0F0";
+
+  // Derived rather than pushed through state, so no effect has to write it.
+  const displayChar = reduceMotion ? targetChar : currentChar;
+  const displayPhase = reduceMotion ? "idle" : flipPhase;
 
   return (
     <div className="solari-flap-module" style={{ perspective: "200px" }}>
       <div className="solari-flap-inner">
         {/* Top half — static */}
         <div className="solari-half solari-top">
-          <span style={{ color: textColor }}>{currentChar}</span>
+          <span style={{ color: textColor }}>{displayChar}</span>
         </div>
 
         {/* Bottom half — static */}
         <div className="solari-half solari-bottom">
-          <span style={{ color: textColor }}>{currentChar}</span>
+          <span style={{ color: textColor }}>{displayChar}</span>
         </div>
 
         {/* Animated top flap — folds down */}
-        {flipPhase === "top-out" && (
+        {displayPhase === "top-out" && (
           <div className="solari-half solari-top solari-flap-animate solari-flap-top-out">
-            <span style={{ color: textColor }}>{currentChar}</span>
+            <span style={{ color: textColor }}>{displayChar}</span>
           </div>
         )}
 
         {/* Animated bottom flap — folds in with next char */}
-        {flipPhase === "bottom-in" && (
+        {displayPhase === "bottom-in" && (
           <div className="solari-half solari-bottom solari-flap-animate solari-flap-bottom-in">
             <span style={{ color: textColor }}>{nextChar}</span>
           </div>

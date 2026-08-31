@@ -411,3 +411,20 @@ body {
     max-width: 100%;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   Honours the OS-level setting. CSS animations and transitions collapse to
+   near-zero here; the JS-driven reveals are handled in MotionPrimitives and
+   SolariFlap, which skip their hidden state entirely rather than rushing it.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

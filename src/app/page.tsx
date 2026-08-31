@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import AirplaneDrift from "@/components/AirplaneDrift";
 
 // Lazy load heavier sections
-const Experience = lazy(() => import("@/components/Experience"));
+// (Experience is currently disabled — see the commented-out section below.)
 const Projects = lazy(() => import("@/components/Projects"));
 const Interactive3D = lazy(() => import("@/components/Interactive3D"));
 const Skills = lazy(() => import("@/components/Skills"));
