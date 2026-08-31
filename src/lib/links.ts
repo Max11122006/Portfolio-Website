@@ -15,6 +15,9 @@ export const SOCIAL = {
   email: "mailto:maxdubowski1112@gmail.com",
 } as const;
 
+/** Build a repo URL from its name, so the account handle lives in exactly one place. */
+export const repoUrl = (name: string) => `https://github.com/${GITHUB_USER}/${name}`;
+
 /** CV served from public/. `downloadName` keeps it out of a downloads folder as "cv.pdf". */
 export const CV = {
   href: "/cv.pdf",

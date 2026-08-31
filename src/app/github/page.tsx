@@ -5,96 +5,102 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/MotionPrimitives";
 import BreadboardCard from "@/components/BreadboardCard";
+import { allProjects } from "@/data/projects";
 
 type RepoCategory = "university" | "hackathon" | "personal";
 
-interface Repo {
-  id: number;
-  name: string;
+/**
+ * GitHub-specific metadata only. The repo name and URL are NOT stored here —
+ * they are derived from src/data/projects.ts via `slug`, so renaming a repo or
+ * changing the account handle is a single edit in one file.
+ */
+interface RepoMeta {
+  slug: string;
   description: string;
   category: RepoCategory;
   language: string;
   languageColor: string;
   stars?: number;
   topics: string[];
-  url: string;
   lastUpdated: string;
 }
 
-const repos: Repo[] = [
+type Repo = RepoMeta & { name: string; url: string };
+
+const repoMeta: RepoMeta[] = [
   // Personal
   {
-    id: 1,
-    name: "missile-trajectory-tracker",
+    slug: "missile-trajectory-tracker",
     description: "Physics-based simulation tool for modelling projectile motion and flight trajectories with real-time visualisation.",
     category: "personal",
     language: "Python",
     languageColor: "#3572A5",
     stars: 1,
     topics: ["physics", "simulation", "data-visualisation"],
-    url: "https://github.com/Max11122006/missile-trajectory-tracker",
     lastUpdated: "2026-02",
   },
   {
-    id: 2,
-    name: "stormwatch-ai",
+    slug: "storm-formation-analysis",
     description: "Data-driven system analysing satellite imagery and weather APIs to identify early indicators of storm development.",
     category: "personal",
     language: "Python",
     languageColor: "#3572A5",
     topics: ["weather-apis", "computer-vision", "data-analysis"],
-    url: "https://github.com/Max11122006/stormwatch-ai",
     lastUpdated: "2026-03",
   },
   {
-    id: 3,
-    name: "crude-flow",
+    slug: "crude-flow",
     description: "Real-time global oil shipping intelligence platform with GPU-accelerated Mapbox visualisation and WebSocket data streaming.",
     category: "personal",
     language: "TypeScript",
     languageColor: "#3178c6",
     topics: ["nextjs", "mapbox", "websockets", "real-time"],
-    url: "https://github.com/Max11122006/crude-flow",
     lastUpdated: "2026-03",
   },
   {
-    id: 4,
-    name: "Portfolio-Website",
+    slug: "portfolio-website",
     description: "Aerospace-themed engineering portfolio built with Next.js, Tailwind CSS, Framer Motion, and Three.js.",
     category: "personal",
     language: "TypeScript",
     languageColor: "#3178c6",
     topics: ["nextjs", "portfolio", "threejs", "tailwind"],
-    url: "https://github.com/Max11122006/Portfolio-Website",
     lastUpdated: "2026-03",
   },
 
   // University
   {
-    id: 5,
-    name: "Bending-Beam-Max",
+    slug: "beam-deflection-rig",
     description: "Experimental rig to measure beam deflection under load and estimate Young's modulus. Arduino-based sensing with data validation.",
     category: "university",
     language: "C++",
     languageColor: "#f34b7d",
     topics: ["arduino", "structural-mechanics", "sensors"],
-    url: "https://github.com/Max11122006/Bending-Beam-Max",
     lastUpdated: "2026-03",
   },
 
   // Hackathon
   {
-    id: 6,
-    name: "friendly",
+    slug: "friendly",
     description: "Mobile-first social coordination platform with automated availability matching, real-time chat, and live location features.",
     category: "hackathon",
     language: "TypeScript",
     languageColor: "#3178c6",
     topics: ["nextjs", "firebase", "real-time", "ux-design"],
-    url: "https://github.com/Max11122006/friendly",
     lastUpdated: "2026-03",
   },
 ];
+
+// Resolve name + URL from the project data. A slug with no repo URL is a
+// build-time failure rather than a card that silently disappears.
+const repos: Repo[] = repoMeta.map((meta) => {
+  const url = allProjects.find((p) => p.slug === meta.slug)?.links.repo;
+  if (!url) {
+    throw new Error(
+      `/github: project "${meta.slug}" has no links.repo in src/data/projects.ts`
+    );
+  }
+  return { ...meta, url, name: url.split("/").pop()! };
+});
 
 const categories: { key: RepoCategory; label: string; icon: string; ledColor: string }[] = [
   { key: "university", label: "University", icon: "🎓", ledColor: "#3b82f6" },
@@ -258,7 +264,7 @@ export default function GitHubPage() {
             staggerDelay={0.08}
           >
             {filteredRepos.map((repo) => (
-              <StaggerItem key={repo.id}>
+              <StaggerItem key={repo.slug}>
                 <RepoCard repo={repo} />
               </StaggerItem>
             ))}

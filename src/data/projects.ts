@@ -12,6 +12,8 @@
 
 // Assembled from parts so the marker constant is not itself a grep hit —
 // only real placeholders should show up when grepping for the marker.
+import { repoUrl } from "@/lib/links";
+
 export const COPY_TODO = "TODO" + "(copy):";
 
 /** True while a field is still awaiting real copy. */
@@ -79,7 +81,7 @@ const projects: Project[] = [
     image: "/projects/beam-deflection.jpg",
     imageAlt:
       "The test rig photographed from above and annotated: a brass beam clamped to an aluminium extrusion frame, with a servo motor, load cell, HX711 amplifier, breadboard, Arduino Uno and a 199 g calibration weight each labelled.",
-    links: { repo: "https://github.com/Max11122006/Bending-Beam-Max" },
+    links: { repo: repoUrl("Bending-Beam-Max") },
     featured: true,
     order: 1,
     description:
@@ -98,7 +100,7 @@ const projects: Project[] = [
     image: "/projects/crude-flow.jpg",
     imageAlt:
       "The Crude Flow dashboard: a dark world map clustered with tracked tanker counts, beside a live intel feed and a fleet statistics panel showing vessels tracked, in transit, at anchor and in conflict.",
-    links: { repo: "https://github.com/Max11122006/crude-flow" },
+    links: { repo: repoUrl("crude-flow") },
     featured: true,
     order: 2,
     description:
@@ -137,7 +139,7 @@ const projects: Project[] = [
     image: "/projects/missile-trajectory.jpg",
     imageAlt:
       "Screenshot of the tracker: coloured intercept paths plotted on 3D axes converging on targets, beside a status panel listing launches, per-target fleet state and a hit/miss summary.",
-    links: { repo: "https://github.com/Max11122006/missile-trajectory-tracker" },
+    links: { repo: repoUrl("missile-trajectory-tracker") },
     featured: true,
     order: 4,
     description:
@@ -176,7 +178,7 @@ const projects: Project[] = [
     image: "/projects/friendly.jpg",
     imageAlt:
       "The Friendly landing page: the headline “Your campus. Always in sync.” over a photo of graduates throwing their caps, with get-started and live-map buttons beneath.",
-    links: { repo: "https://github.com/Max11122006/friendly" },
+    links: { repo: repoUrl("friendly") },
     featured: true,
     order: 6,
     description:
@@ -195,7 +197,7 @@ const projects: Project[] = [
     image: "/projects/storm-analysis.jpg",
     imageAlt:
       "A weather radar composite of a large spiral storm system over the Gulf coast, rainfall intensity shaded from blue through green and yellow to red around the eye, with city names marked.",
-    links: { repo: "https://github.com/Max11122006/stormwatch-ai" },
+    links: { repo: repoUrl("stormwatch-ai") },
     featured: false,
     order: 7,
     description:
@@ -214,7 +216,7 @@ const projects: Project[] = [
     image: "/projects/portfolio-website.jpg",
     imageAlt:
       "This portfolio's home page: the split-flap board spelling MAKSYMILIAN DUBOWSKI above BENG AEROSPACE ENGINEERING, on a pale graph-paper background.",
-    links: { repo: "https://github.com/Max11122006/Portfolio-Website" },
+    links: { repo: repoUrl("Portfolio-Website") },
     featured: false,
     order: 8,
     description:
