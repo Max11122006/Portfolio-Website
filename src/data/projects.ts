@@ -71,21 +71,22 @@ const projects: Project[] = [
   {
     slug: "beam-deflection-rig",
     title: "Beam Deflection Measurement Rig",
-    category: "Experimental Engineering",
-    date: "TODO(copy): when this was built",
-    hook: "TODO(copy): one-line hook",
-    problem: "TODO(copy): what was actually hard",
-    approach: "TODO(copy): the decision made, and what was rejected",
-    outcome: "TODO(copy): a number, a state, or an honest limitation",
-    tags: ["Arduino", "Structural Mechanics", "Experimental Engineering", "Sensors", "Data Analysis"],
+    category: "Instrumentation & Testing",
+    date: "Spring 2025",
+    hook: "Measures the stiffness of a brass beam by bending it with a servo and reading the force back through a load cell.",
+    problem:
+      "Young's modulus falls out of a one-line beam equation, but every term in that equation is a measurement you have to make. On a 240 mm brass beam the deflections are 1.5 to 9.4 mm — small enough that reading them off a ruler by eye puts the measurement error on the same order as the quantity being measured.",
+    approach:
+      "Automated the load side to take human variability out of at least half the experiment. An Arduino Uno drives a servo that steps the beam through five fixed positions, triggered from the serial monitor, with an HX711 load cell and amplifier reading applied force at each stop. The cell was calibrated against a known 199 g mass to a factor of 405.8, and the full sequence repeated across five runs. The deflection side stayed manual — a ruler — which is precisely where the error ended up.",
+    outcome:
+      "144 GPa, against a published range of 102–125 GPa for brass. Force repeatability was good: within 3.9% at full load across five runs. But the modulus came out high at every single load point, not scattered around the true value — which points at a systematic error rather than noise, and made the error analysis more interesting than the result. Ruler resolution on a 1.5 mm deflection, servo clamp slip, and the effective cantilever length being shorter than the beam's full 240 mm are all candidates; since E scales with L³, roughly 15 mm of clamped length alone would account for the entire discrepancy.",
+    tags: ["Arduino", "C++", "Load Cells", "Instrumentation", "Data Analysis", "Mechanical Testing"],
     image: "/projects/beam-deflection.jpg",
     imageAlt:
-      "The test rig photographed from above and annotated: a brass beam clamped to an aluminium extrusion frame, with a servo motor, load cell, HX711 amplifier, breadboard, Arduino Uno and a 199 g calibration weight each labelled.",
+      "Cantilever bending rig on an aluminium extrusion frame: an orange brass beam clamped at one end, a servo motor applying load at the free end, with an HX711 amplifier and Arduino Uno wired on a breadboard alongside.",
     links: { repo: repoUrl("Bending-Beam-Max") },
     featured: true,
-    order: 1,
-    description:
-      "Custom-built experimental rig to measure beam deflection under load and estimate Young’s modulus of a brass beam. Integrated Arduino-based sensing system to capture displacement data and validate theoretical models.",
+    order: 2,
   },
   {
     slug: "crude-flow",
@@ -102,7 +103,7 @@ const projects: Project[] = [
       "The Crude Flow dashboard: a dark world map clustered with tracked tanker counts, beside a live intel feed and a fleet statistics panel showing vessels tracked, in transit, at anchor and in conflict.",
     links: { repo: repoUrl("crude-flow") },
     featured: true,
-    order: 2,
+    order: 1,
     description:
       "Real-time global oil shipping intelligence platform visualising live AIS vessel data on a GPU-accelerated Mapbox map. Integrates conflict zone intelligence, commodity pricing, and maritime news into a unified operational dashboard, streamed via server-side WebSockets for scalable, low-latency delivery.",
   },
