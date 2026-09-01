@@ -15,8 +15,13 @@ export const SOCIAL = {
   email: "mailto:maxdubowski1112@gmail.com",
 } as const;
 
-/** Build a repo URL from its name, so the account handle lives in exactly one place. */
-export const repoUrl = (name: string) => `https://github.com/${GITHUB_USER}/${name}`;
+/**
+ * Build a repo URL from its name, so the account handle lives in exactly one
+ * place. `owner` defaults to this account; pass it for a team repo owned by
+ * someone else, so those still avoid a literal URL in the data.
+ */
+export const repoUrl = (name: string, owner: string = GITHUB_USER) =>
+  `https://github.com/${owner}/${name}`;
 
 /** CV served from public/. `downloadName` keeps it out of a downloads folder as "cv.pdf". */
 export const CV = {

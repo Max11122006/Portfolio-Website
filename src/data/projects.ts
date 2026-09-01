@@ -86,26 +86,27 @@ const projects: Project[] = [
       "Cantilever bending rig on an aluminium extrusion frame: an orange brass beam clamped at one end, a servo motor applying load at the free end, with an HX711 amplifier and Arduino Uno wired on a breadboard alongside.",
     links: { repo: repoUrl("Bending-Beam-Max") },
     featured: true,
-    order: 2,
+    order: 3,
   },
   {
     slug: "crude-flow",
     title: "Crude Flow",
     category: "Software & Data",
-    date: "TODO(copy): when this was built",
-    hook: "TODO(copy): one-line hook",
-    problem: "TODO(copy): what was actually hard",
-    approach: "TODO(copy): the decision made, and what was rejected",
-    outcome: "TODO(copy): a number, a state, or an honest limitation",
-    tags: ["Next.js", "TypeScript", "Mapbox GL JS", "WebSockets", "Data Visualisation", "APIs", "Real-Time Systems"],
+    date: "March 2026",
+    hook: "A command-centre map of live tanker traffic, with the chokepoints, conflict zones and news that move the oil price layered on top.",
+    problem:
+      "AIS doesn't tell you what a ship is and where it is in the same message. Position reports arrive continuously and carry no vessel type; the static data identifying a ship as a tanker arrives separately and irregularly. So filtering a global feed down to oil tankers means you've already drawn a vessel on the map by the time you learn it's a car ferry — and the raw feed is far more traffic than a browser can turn into map updates anyway.",
+    approach:
+      "Held the identity problem on the server. A Next.js route opens the WebSocket to aisstream.io and bridges it to the browser as Server-Sent Events, which keeps the API key off the client and gives somewhere stateful to reconcile the two message types. The server maintains an MMSI-keyed cache of static data, enriches each position report as it passes through, and — when static data proves a vessel isn't a tanker — emits an explicit remove message so the client can retract something it has already rendered. The cache is capped at 10,000 vessels with oldest-first eviction so a long-running stream can't grow without bound. On the client, incoming positions buffer into a Map and flush to the Mapbox GeoJSON source every five seconds rather than per message, with static fields preserved across merges so a sparse update doesn't blank a vessel's destination. Mapbox clusters below zoom 6, and the dashboard is dynamically imported with SSR off to keep the map library out of first paint.",
+    outcome:
+      "Runs against five live data sources at once — AIS positions, Mapbox tiles, ACLED conflict events, oil prices and news feeds — with tankers updating on the map every five seconds and chokepoint traffic counted from live vessel positions. The cache intervals weren't a design preference but a constraint: free tiers of 800 and 100 requests a day set prices to five minutes, news to ten, and conflict data to an hour. The outstanding work is hosting — the AIS bridge holds a long-lived stream, which doesn't fit inside a serverless function's execution limit, so that one route needs an always-on host.",
+    tags: ["Next.js", "TypeScript", "Mapbox GL JS", "WebSockets", "Server-Sent Events", "Real-Time Systems", "Data Visualisation"],
     image: "/projects/crude-flow.jpg",
     imageAlt:
-      "The Crude Flow dashboard: a dark world map clustered with tracked tanker counts, beside a live intel feed and a fleet statistics panel showing vessels tracked, in transit, at anchor and in conflict.",
+      "Dark command-centre dashboard: a world map with clustered tanker markers and highlighted conflict zones, an oil price ticker across the top, a scrolling maritime intel feed on the right, and a chokepoint status strip along the bottom.",
     links: { repo: repoUrl("crude-flow") },
     featured: true,
     order: 1,
-    description:
-      "Real-time global oil shipping intelligence platform visualising live AIS vessel data on a GPU-accelerated Mapbox map. Integrates conflict zone intelligence, commodity pricing, and maritime news into a unified operational dashboard, streamed via server-side WebSockets for scalable, low-latency delivery.",
   },
   {
     slug: "3d-printing-prototyping",
@@ -123,28 +124,29 @@ const projects: Project[] = [
     heroImage: "/projects/3d-printing.jpg",
     links: {},
     featured: true,
-    order: 3,
+    order: 4,
     description:
       "Iterative design and fabrication of mechanical components using CAD and 3D printing. Focused on rapid prototyping, testing design constraints, and refining functional parts for small-scale engineering systems.",
   },
   {
     slug: "missile-trajectory-tracker",
     title: "Missile Trajectory Tracker",
-    category: "Software & Simulation",
-    date: "TODO(copy): when this was built",
-    hook: "TODO(copy): one-line hook",
-    problem: "TODO(copy): what was actually hard",
-    approach: "TODO(copy): the decision made, and what was rejected",
-    outcome: "TODO(copy): a number, a state, or an honest limitation",
-    tags: ["Python", "Physics Simulation", "Data Visualisation", "Mathematics"],
+    category: "Simulation & Control",
+    date: "February 2026",
+    hook: "A ground-to-air intercept simulation: a proportional-navigation missile chases an aircraft that fights back, plotted in a 3-D space you can orbit.",
+    problem:
+      "Pointing a missile at where an aircraft currently is doesn't intercept it. By the time you arrive the target has moved, and against anything manoeuvring a pure-pursuit missile ends up in a tail chase it can't win. Interception means steering toward where the target is going to be — using only what a seeker can actually measure, which is the bearing to the target and the rate at which that bearing is changing.",
+    approach:
+      "Implemented proportional navigation, the guidance law real interceptors use: acceleration command = N × closing velocity × line-of-sight rate, with a navigation constant of 4. The insight it encodes is that if the bearing to your target isn't rotating, you're already on a collision course — so the missile steers to drive the line-of-sight rate to zero, which produces lead pursuit instead of a tail chase. The missile flies against real dynamics rather than in a vacuum: thrust along its own velocity vector, gravity, quadratic drag, a turn-rate limit and a hard speed cap, so the guidance has to cope with a vehicle that doesn't do exactly what it's told. The 3-D view is hand-rolled rather than imported — spherical camera position, forward/right/up basis vectors, perspective divide — which kept the whole simulation to a single dependency.",
+    outcome:
+      "Built in one night; first commit at midnight, last at 01:29. The final commit is the one worth pointing at: once interception worked reliably, the target got a threat model. The aircraft computes a continuous 0-to-1 threat level from missile range and scales its whole response against it — turn rate from 1.2 to 3.0 rad/s, pitch authority from 15° to 50°, a speed boost, shorter intervals between manoeuvres, and hard break-turns perpendicular to the threat bearing. Making the problem harder once the easy version worked turned out to be more interesting than tuning the guidance further. Around 990 lines of Python, one dependency.",
+    tags: ["Python", "Pygame", "Proportional Navigation", "Guidance & Control", "Flight Dynamics", "3D Rendering", "Physics Simulation"],
     image: "/projects/missile-trajectory.jpg",
     imageAlt:
-      "Screenshot of the tracker: coloured intercept paths plotted on 3D axes converging on targets, beside a status panel listing launches, per-target fleet state and a hit/miss summary.",
+      "Ground-to-air intercept simulation: several coloured missile trails curving through a 3-D graph space with labelled range, lateral and altitude axes, converging on amber intercept bursts around a red aircraft icon, beside a telemetry panel listing fleet status, hits and camera angles.",
     links: { repo: repoUrl("missile-trajectory-tracker") },
     featured: true,
-    order: 4,
-    description:
-      "Physics-based simulation tool for modelling projectile motion and flight trajectories. Implements kinematic equations with adjustable parameters and real-time visualisation to analyse trajectory behaviour and prediction accuracy.",
+    order: 2,
   },
   {
     slug: "honda-civic-projects",
@@ -162,7 +164,7 @@ const projects: Project[] = [
     heroImage: "/projects/honda/hero.jpg",
     links: {},
     featured: true,
-    order: 5,
+    order: 6,
     description:
       "Hands-on mechanical work including diagnostics, maintenance, and component-level modifications on a 2006 Honda Civic. Applied real-world engineering principles to understand automotive systems and improve performance and reliability.",
   },
@@ -170,20 +172,21 @@ const projects: Project[] = [
     slug: "friendly",
     title: "Friendly",
     category: "Software & Web",
-    date: "TODO(copy): when this was built",
-    hook: "TODO(copy): one-line hook",
-    problem: "TODO(copy): what was actually hard",
-    approach: "TODO(copy): the decision made, and what was rejected",
-    outcome: "TODO(copy): a number, a state, or an honest limitation",
-    tags: ["Next.js", "TypeScript", "Firebase", "Real-Time Systems", "UX Design", "Full-Stack Development"],
+    date: "Feb–Mar 2026",
+    hook: "Works out when a group of friends is actually free, then gets them to the same place — availability matching, group chat and live location in one app.",
+    problem:
+      "Organising anything with a group dies in the group chat. Everyone's availability lives in their own head, the thread scrolls past whatever was agreed, and it takes twenty messages before someone gives up. There are really two problems stacked on each other: finding overlapping free time across a group, and then getting everyone to converge on one place — and neither is something a chat thread is any good at.",
+    approach:
+      "Four of us built it over about a month, working together on one machine, which shaped the architecture as much as any technical decision did. The system was split into four areas — auth and infrastructure, groups and chat, availability and the recommendation engine, map and UI — with a shared types file nobody overwrites and a written onboarding guide so whoever sat down next could pick up where the last person stopped. Firebase Firestore does the real-time work: anonymous auth so there's no signup friction, and onSnapshot listeners so chat, member locations and proposed sessions stay in sync across every client with no backend to run. The recommendation engine takes each member's weekly availability blocks and returns slots ranked by how many people are free, so the app proposes times rather than asking the group to negotiate them.",
+    outcome:
+      "A working prototype covering the whole loop: anonymous sign-in, creating and joining groups by invite code, realtime group and direct chat, a friends system, weekly availability blocks, ranked meetup suggestions, and live location sharing on a map via the browser's geolocation API. Around 2,900 lines across 19 components and modules. The harder problem turned out to be organisational rather than technical — four people building one codebase on one laptop only works if the division of labour and the shared interfaces are agreed before anyone starts typing.",
+    tags: ["Team Project", "Next.js", "TypeScript", "Firebase", "Firestore", "Real-Time Sync", "Geolocation"],
     image: "/projects/friendly.jpg",
     imageAlt:
-      "The Friendly landing page: the headline “Your campus. Always in sync.” over a photo of graduates throwing their caps, with get-started and live-map buttons beneath.",
-    links: { repo: repoUrl("friendly") },
+      "Friendly app interface showing a group page with member availability, ranked meetup time suggestions, and a map with live member locations.",
+    links: { repo: repoUrl("friendly", "AdamAzeb") },
     featured: true,
-    order: 6,
-    description:
-      "Mobile-first web application that eliminates the friction of organising meetups through automated availability matching and live location features. Built on a serverless Firebase architecture with real-time chat, scheduling, and group discovery in a single unified interface.",
+    order: 5,
   },
   {
     slug: "storm-formation-analysis",
