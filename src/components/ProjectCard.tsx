@@ -35,12 +35,6 @@ export default function ProjectCard({
 }) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
 
-  // While `hook` is still a placeholder, fall back to the existing approved
-  // description rather than showing a gap where real copy already exists.
-  // Remove the fallback (and Project.description) once the hooks are written.
-  const hookIsReal = !isPlaceholder(project.hook);
-  const hookText = hookIsReal ? project.hook : project.description;
-
   return (
     <div className="group relative h-full">
       <BreadboardCard className="h-full" hover>
@@ -68,7 +62,7 @@ export default function ProjectCard({
           </Heading>
 
           <p className="text-sm text-muted leading-relaxed mb-4">
-            {hookText ?? <CopyGap text={project.hook} />}
+            {isPlaceholder(project.hook) ? <CopyGap text={project.hook} /> : project.hook}
           </p>
 
           <div className="flex flex-wrap gap-2 mt-auto">
