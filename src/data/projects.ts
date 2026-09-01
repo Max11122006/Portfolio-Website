@@ -5,6 +5,10 @@
  * public/projects/. Nothing else needs touching: `featured` and `order` drive
  * both the homepage selection and the workshop list.
  *
+ * The current `order` arrangement is PROVISIONAL — a placeholder ranking, not a
+ * settled editorial decision. Renumbering is a one-line change per entry and
+ * needs no component changes.
+ *
  * Copy for the four beats (hook / problem / approach / outcome) and the dates
  * are being written separately. Fields still holding a placeholder marker are
  * rendered as clearly-marked gaps and reported by scripts/check-copy.mjs.
@@ -54,13 +58,6 @@ export interface Project {
   featured: boolean;
   /** Explicit sort, lowest first. Applies to both lists. */
   order: number;
-
-  /**
-   * @deprecated Superseded by `hook`. Retained so the site keeps its existing
-   * approved copy while the new beats are still placeholders; remove this field
-   * once every entry has a real `hook`.
-   */
-  description?: string;
 }
 
 const WIRE_COLORS = ["red", "blue", "green", "yellow", "orange", "purple"];
@@ -113,11 +110,14 @@ const projects: Project[] = [
     title: "3D Printer",
     category: "Design & Fabrication",
     date: "TODO(copy): when this was built",
-    hook: "TODO(copy): one-line hook",
-    problem: "TODO(copy): what was actually hard",
-    approach: "TODO(copy): the decision made, and what was rejected",
-    outcome: "TODO(copy): a number, a state, or an honest limitation",
-    tags: ["CAD", "3D Printing", "Mechanical Design", "Prototyping"],
+    hook: "An Ender 3 V2 taken apart subsystem by subsystem — auto bed levelling, a printed extruder housing, recompiled firmware, and remote control from a Raspberry Pi.",
+    problem:
+      "A stock consumer printer fails in predictable places: the bed is trammed by hand before every print, the extruder skips on long jobs, and once you leave the room you have no idea whether it is still printing. Each is a separate limitation, and the fixes interact — hardware the firmware doesn't know about is just hardware that doesn't work.",
+    approach:
+      "Treated each limitation as its own subsystem rather than replacing the machine. A BLTouch probe mounted and wired into the control board, the firmware configuration modified to enable it, then probe offsets calibrated and a bed mesh generated. A custom extruder housing designed and printed, with upgraded hotend and part cooling and a better nozzle, and the stock extruder assembly swapped out with tension and alignment set for consistent feeding. Firmware recompiled and flashed to match the upgraded hardware. OctoPrint on a Raspberry Pi 3B+ connected over USB, with a camera module for live monitoring.",
+    outcome:
+      "Running as a customised machine: first-layer accuracy good enough to drop the manual levelling step, extrusion consistent across material types on long prints, and full control and a live view from any device on the network. Begun at 15 and iterated on since. The honest limitation is that none of it was measured — the outcomes are observed reliability across repeated prints rather than numbers.",
+    tags: ["3D Printing", "CAD", "Firmware", "Raspberry Pi", "OctoPrint", "Calibration"],
     image: "/projects/3d-printing.jpg",
     imageAlt:
       "A desktop 3D printer on a workbench, mid-setup: filament spool on the left, LED light bar across the top of the frame, touchscreen controller on the right, and scrapers and printed parts around the base.",
@@ -125,8 +125,6 @@ const projects: Project[] = [
     links: {},
     featured: true,
     order: 4,
-    description:
-      "Iterative design and fabrication of mechanical components using CAD and 3D printing. Focused on rapid prototyping, testing design constraints, and refining functional parts for small-scale engineering systems.",
   },
   {
     slug: "missile-trajectory-tracker",
@@ -153,11 +151,14 @@ const projects: Project[] = [
     title: "Honda Civic Engineering Projects",
     category: "Automotive & Mechanical",
     date: "TODO(copy): when this was built",
-    hook: "TODO(copy): one-line hook",
-    problem: "TODO(copy): what was actually hard",
-    approach: "TODO(copy): the decision made, and what was rejected",
-    outcome: "TODO(copy): a number, a state, or an honest limitation",
-    tags: ["Automotive Systems", "Mechanical Engineering", "Diagnostics", "Problem Solving"],
+    hook: "Diagnosing and repairing a 2006 Civic end to end — an intermittent no-start traced to the fuel pump, plus a head unit and amplifier wired in from the battery.",
+    problem:
+      "An intermittent starting fault hands you one symptom and a list of candidate causes — battery, ignition, relays, fuel delivery — and swapping parts until it stops is expensive and teaches you nothing about the car. The audio install had the opposite failure mode: the components matter far less than the power and ground paths, and getting those wrong puts engine noise through the speakers.",
+    approach:
+      "Worked the no-start by elimination rather than replacement — ruled out battery, ignition and relay causes by testing each in turn, narrowed the fault to fuel delivery, then accessed and replaced the pump assembly. For the audio, mapped the factory harness against the new head unit before connecting anything, ran a dedicated fused power cable from the battery, chose a ground point specifically to keep noise out of the signal path, and set amplifier gain to avoid clipping rather than for volume.",
+    outcome:
+      "Starting reliability restored, and the audio system runs with no interference or power issues. Carbon deposits cleaned from the throttle body improved throttle response as a separate job. The transferable part is the method rather than the parts — a subsystem model and elimination, on a car where nothing is instrumented and the only feedback is whether it starts.",
+    tags: ["Automotive Systems", "Fault Diagnosis", "Automotive Electrics", "Mechanical Repair"],
     image: "/projects/honda-civic.jpg",
     imageAlt:
       "The open engine bay of the Honda Civic, showing the intake manifold, wiring looms and hoses, and a battery with newly fitted red and black terminal leads.",
@@ -165,8 +166,6 @@ const projects: Project[] = [
     links: {},
     featured: true,
     order: 6,
-    description:
-      "Hands-on mechanical work including diagnostics, maintenance, and component-level modifications on a 2006 Honda Civic. Applied real-world engineering principles to understand automotive systems and improve performance and reliability.",
   },
   {
     slug: "friendly",
@@ -192,11 +191,14 @@ const projects: Project[] = [
     slug: "storm-formation-analysis",
     title: "Storm Formation Analysis Tool",
     category: "Software & Data",
-    date: "TODO(copy): when this was built",
-    hook: "TODO(copy): one-line hook",
-    problem: "TODO(copy): what was actually hard",
-    approach: "TODO(copy): the decision made, and what was rejected",
-    outcome: "TODO(copy): a number, a state, or an honest limitation",
+    date: "July 2025",
+    hook: "Pulls satellite imagery and live weather data together to look for the conditions that precede a storm.",
+    problem:
+      "Storm formation shows up in two kinds of data that don't naturally line up: what the cloud field looks like from above, and what temperature, pressure and humidity are doing underneath it. Neither on its own says much, and they arrive in different formats from different providers.",
+    approach:
+      "Built a Python pipeline that ingests both and treats them as one dataset — satellite imagery for cloud-formation features, the OpenWeatherMap API for the numerical environmental picture — with feature extraction over the imagery aimed at spotting cumulonimbus development early. Kept the stages modular so a model could be dropped in later, rather than building prediction in from the start.",
+    outcome:
+      "An ingestion and analysis pipeline rather than a finished predictor. It reads both sources and extracts features, but there is no trained model behind it and no alerting, so it surfaces patterns rather than forecasting from them. The honest limitation is that the machine-learning step the pipeline was shaped around was never added.",
     tags: ["Python", "Weather APIs", "Data Analysis", "Computer Vision"],
     image: "/projects/storm-analysis.jpg",
     imageAlt:
@@ -204,28 +206,28 @@ const projects: Project[] = [
     links: { repo: repoUrl("stormwatch-ai") },
     featured: false,
     order: 7,
-    description:
-      "Data-driven system analysing satellite imagery and weather APIs to identify early indicators of storm development. Combines image processing and environmental data to explore pattern recognition in atmospheric conditions.",
   },
   {
     slug: "portfolio-website",
     title: "Engineering Portfolio Website",
     category: "Software & Web",
-    date: "TODO(copy): when this was built",
-    hook: "TODO(copy): one-line hook",
-    problem: "TODO(copy): what was actually hard",
-    approach: "TODO(copy): the decision made, and what was rejected",
-    outcome: "TODO(copy): a number, a state, or an honest limitation",
-    tags: ["Web Development", "UI Design", "HTML", "CSS", "JavaScript"],
+    date: "February 2026 – ongoing",
+    hook: "The site you're reading: an engineering portfolio built as its own worked example rather than assembled from a template.",
+    problem:
+      "A portfolio has to be memorable enough that someone remembers whose it was, and plain enough that it never gets in the way of the projects. Templates give up the first to guarantee the second.",
+    approach:
+      "Built the visual language out of the subject matter instead of decorating a template: a Solari split-flap board that flips the name into place, a Göttingen 386 airfoil with skill labels riding animated streamlines, project cards drawn as breadboards with jumper-wire tags, all on a graph-paper ground. Next.js App Router with TypeScript and Tailwind, Framer Motion for entrance and scroll animation, and the airfoil rendered as plain SVG with its streamlines computed in JavaScript rather than dropping to canvas.",
+    outcome:
+      "Live, and the front door for internship applications. It has since been through a correctness pass that mattered more than the visuals: project cards that only revealed their imagery and links on hover — invisible on a phone — now show both without hovering, unoptimised photographs that accounted for most of the page weight were routed through the image pipeline, and missing heading structure and reduced-motion support were added. Several project write-ups are still being written.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "SVG Animation", "Vercel"],
     image: "/projects/portfolio-website.jpg",
     imageAlt:
       "This portfolio's home page: the split-flap board spelling MAKSYMILIAN DUBOWSKI above BENG AEROSPACE ENGINEERING, on a pale graph-paper background.",
     links: { repo: repoUrl("Portfolio-Website") },
     featured: false,
     order: 8,
-    description:
-      "Designed and developed a personal portfolio website to showcase engineering projects and skills. Focused on clean UI, structured project presentation, and responsive design.",
   },
+  
 ];
 
 const byOrder = (a: Project, b: Project) => a.order - b.order;

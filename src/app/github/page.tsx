@@ -46,7 +46,7 @@ const repoMeta: RepoMeta[] = [
     language: "Python",
     languageColor: "#3572A5",
     topics: ["weather-apis", "computer-vision", "data-analysis"],
-    lastUpdated: "2026-03",
+    lastUpdated: "2025-07",
   },
   {
     slug: "crude-flow",
@@ -64,7 +64,7 @@ const repoMeta: RepoMeta[] = [
     language: "TypeScript",
     languageColor: "#3178c6",
     topics: ["nextjs", "portfolio", "threejs", "tailwind"],
-    lastUpdated: "2026-03",
+    lastUpdated: "2026-09",
   },
 
   // University
@@ -75,7 +75,7 @@ const repoMeta: RepoMeta[] = [
     language: "C++",
     languageColor: "#f34b7d",
     topics: ["arduino", "structural-mechanics", "sensors"],
-    lastUpdated: "2026-03",
+    lastUpdated: "2025-04",
   },
 
   // Hackathon
