@@ -18,12 +18,9 @@ const jetbrainsMono = JetBrains_Mono({
 
 const SITE_URL = "https://www.maxdubowski.com";
 
-// The old description claimed "future commercial pilot" and property-management
-// experience, neither of which the site argues. The replacement sentence is
-// being written alongside the project copy — see 02/04 in docs/portfolio-fixes.
-// MUST NOT SHIP: replace before deploying.
+// Feeds <meta description>, og:description and twitter:description.
 const DESCRIPTION =
-  "TODO(copy): one sentence under 155 characters, hardware-plus-software framing.";
+  "Aerospace engineering student in Edinburgh building at the intersection of hardware and software \u2014 embedded systems, simulation, and real-time data.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
