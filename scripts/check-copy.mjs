@@ -30,7 +30,7 @@ for (let i = 0; i < slugPositions.length; i++) {
   const start = slugPositions[i].index;
   const end = i + 1 < slugPositions.length ? slugPositions[i + 1].index : source.length;
   const block = source.slice(start, end);
-  const fields = [...block.matchAll(/^\s{4}(\w+):\s*"TODO\(copy\):/gm)].map((m) => m[1]);
+  const fields = [...block.matchAll(/^\s{4}(\w+): "", *\/\/ *TODO\(copy\)/gm)].map((m) => m[1]);
   if (fields.length) entries.push({ slug: slugPositions[i].slug, fields });
 }
 
@@ -47,7 +47,7 @@ const lines = [
   "",
   ...entries.map((e) => `     ${e.slug.padEnd(28)} ${e.fields.join(", ")}`),
   "",
-  "   These render as visible gaps on the site. Replace them in",
+  "   These render as nothing on the site. Replace them in",
   "   src/data/projects.ts before deploying, or run with --strict to fail.",
   "",
 ];

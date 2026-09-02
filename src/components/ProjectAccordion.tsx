@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import type { ProjectSection } from "@/data/projectDetails";
+import type { ProjectSection } from "@/data/projects";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -27,12 +27,12 @@ export default function ProjectAccordion({
   return (
     <div className="divide-y divide-border border-t border-border">
       {sections.map((section) => {
-        const isOpen = openSet.has(section.title);
+        const isOpen = openSet.has(section.heading);
         return (
-          <div key={section.title}>
+          <div key={section.heading}>
             {/* Header */}
             <button
-              onClick={() => toggle(section.title)}
+              onClick={() => toggle(section.heading)}
               className="w-full flex items-center justify-between py-5 text-left group"
             >
               <div className="flex items-center gap-3">
@@ -42,7 +42,7 @@ export default function ProjectAccordion({
                   }`}
                 />
                 <span className="text-xs font-mono tracking-[0.2em] uppercase text-foreground group-hover:text-accent transition-colors duration-200">
-                  {section.title}
+                  {section.heading}
                 </span>
               </div>
               <motion.svg
@@ -76,7 +76,7 @@ export default function ProjectAccordion({
                   <div className="pb-7 pl-4">
                     {/* Bullet points */}
                     <ul className="space-y-3 mb-0">
-                      {section.items.map((item) => (
+                      {section.body.map((item) => (
                         <li key={item} className="flex items-start gap-3">
                           <span className="mt-[7px] w-1 h-1 rounded-full bg-accent/60 flex-shrink-0" />
                           <span className="text-sm text-foreground/75 leading-relaxed">
@@ -96,7 +96,7 @@ export default function ProjectAccordion({
                           >
                             <Image
                               src={src}
-                              alt={`${section.title} image ${i + 1}`}
+                              alt={`${section.heading} image ${i + 1}`}
                               width={800}
                               height={600}
                               className="w-full h-auto object-contain"
