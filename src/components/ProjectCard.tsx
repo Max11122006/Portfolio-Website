@@ -3,8 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import BreadboardCard from "./BreadboardCard";
-import CopyGap from "./CopyGap";
-import { type Project, WIRE_COLORS, isPlaceholder } from "@/data/projects";
+import { type Project, WIRE_COLORS } from "@/data/projects";
 
 const LINK_CLASS =
   "inline-flex items-center gap-1.5 py-2.5 text-xs font-mono tracking-wide uppercase text-accent rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface";
@@ -15,23 +14,13 @@ const ARROW = (
   </svg>
 );
 
-/** The three deeper beats, shown only on the workshop. */
-const DEPTH: { key: "problem" | "approach" | "outcome"; label: string }[] = [
-  { key: "problem", label: "Problem" },
-  { key: "approach", label: "Approach" },
-  { key: "outcome", label: "Outcome" },
-];
-
 export default function ProjectCard({
   project,
   headingLevel = 3,
-  showDepth = false,
 }: {
   project: Project;
   /** 3 under a section heading (home page), 2 where cards sit directly under the h1. */
   headingLevel?: 2 | 3;
-  /** Workshop only — adds the collapsible problem/approach/outcome block. */
-  showDepth?: boolean;
 }) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
 
@@ -53,17 +42,21 @@ export default function ProjectCard({
           {/* Eyebrow: category · date */}
           <p className="text-[11px] tracking-[0.2em] uppercase text-accent/70 font-medium mb-4">
             {project.category}
-            <span className="mx-2 text-muted/50">·</span>
-            {isPlaceholder(project.date) ? <CopyGap text={project.date} /> : project.date}
+            {project.date && (
+              <>
+                <span className="mx-2 text-muted/50">·</span>
+                {project.date}
+              </>
+            )}
           </p>
 
           <Heading className="text-lg font-semibold text-foreground mb-3 leading-snug">
             {project.title}
           </Heading>
 
-          <p className="text-sm text-muted leading-relaxed mb-4">
-            {isPlaceholder(project.hook) ? <CopyGap text={project.hook} /> : project.hook}
-          </p>
+          {project.hook && (
+            <p className="text-sm text-muted leading-relaxed mb-4">{project.hook}</p>
+          )}
 
           <div className="flex flex-wrap gap-2 mt-auto">
             {project.tags.map((tag, i) => (
@@ -75,34 +68,6 @@ export default function ProjectCard({
               </span>
             ))}
           </div>
-
-          {/* Workshop depth — collapsed by default so the grid doesn't break */}
-          {showDepth && (
-            <details className="relative z-10 mt-6 group/details">
-              <summary className="cursor-pointer list-none text-xs font-mono tracking-wide uppercase text-muted hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm py-1">
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="transition-transform group-open/details:rotate-90">›</span>
-                  Read the write-up
-                </span>
-              </summary>
-              <dl className="mt-4 space-y-4">
-                {DEPTH.map(({ key, label }) => (
-                  <div key={key}>
-                    <dt className="text-[11px] tracking-[0.2em] uppercase text-accent/70 font-medium mb-1">
-                      {label}
-                    </dt>
-                    <dd className="text-sm text-muted leading-relaxed">
-                      {isPlaceholder(project[key]) ? (
-                        <CopyGap text={project[key]} />
-                      ) : (
-                        project[key]
-                      )}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </details>
-          )}
 
           {/* Links — always rendered, tappable without hover */}
           <div className="flex items-center gap-5 mt-6 pt-1.5 border-t border-border-light">

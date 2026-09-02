@@ -9,20 +9,20 @@
  * settled editorial decision. Renumbering is a one-line change per entry and
  * needs no component changes.
  *
- * Copy for the four beats (hook / problem / approach / outcome) and the dates
- * are being written separately. Fields still holding a placeholder marker are
- * rendered as clearly-marked gaps and reported by scripts/check-copy.mjs.
+ * A field still awaiting copy is an empty string, with a TODO(copy) marker in a
+ * trailing comment. Comments do not survive into the production bundle, so the
+ * marker can never reach the browser, while scripts/check-copy.mjs still reports
+ * the gap by reading this file's text. Empty fields render as nothing at all.
  */
 
-// Assembled from parts so the marker constant is not itself a grep hit —
-// only real placeholders should show up when grepping for the marker.
 import { repoUrl } from "@/lib/links";
 
-export const COPY_TODO = "TODO" + "(copy):";
-
-/** True while a field is still awaiting real copy. */
-export const isPlaceholder = (value: string | undefined): boolean =>
-  !!value && value.trimStart().startsWith(COPY_TODO);
+/** Supporting detail rendered as accordions below the four beats. */
+export interface ProjectSection {
+  heading: string;
+  body: string[];
+  images?: string[];
+}
 
 export interface Project {
   /** Stable identifier — used for React keys, anchors and the detail route. */
@@ -58,6 +58,9 @@ export interface Project {
   featured: boolean;
   /** Explicit sort, lowest first. Applies to both lists. */
   order: number;
+
+  /** Optional supporting detail for the project page, below the beats. */
+  sections?: ProjectSection[];
 }
 
 const WIRE_COLORS = ["red", "blue", "green", "yellow", "orange", "purple"];
@@ -84,6 +87,40 @@ const projects: Project[] = [
     links: { repo: repoUrl("Bending-Beam-Max") },
     featured: true,
     order: 3,
+    sections: [
+      {
+        heading: "Rig & Instrumentation",
+        body: [
+          "Brass beam, 240 × 20 × 2 mm, clamped as a cantilever on an aluminium extrusion frame.",
+          "A servo steps the beam through five fixed deflection positions, triggered from the serial monitor.",
+          "An HX711 load cell and amplifier read applied force at each stop, calibrated against a known 199 g mass to a factor of 405.8.",
+          "Deflection was read by eye from a steel ruler — the one part of the loop never automated, and the one the error analysis points back at.",
+        ],
+      },
+      {
+        heading: "Method",
+        body: [
+          "Five runs across the full sequence, with deflections from 1.5 to 9.4 mm.",
+          "Young's modulus derived per load point from E = FL³ / 3yI, with I = bh³/12 = 1.3333 × 10⁻¹¹ m⁴.",
+          "Force repeatability: 5.5% spread at 1.5 mm, narrowing to 3.9% at full load.",
+        ],
+      },
+      {
+        heading: "Error Analysis",
+        body: [
+          "E per load point: 150.6, 135.6, 142.8, 144.8 and 144.2 GPa, for a mean of 144 GPa.",
+          "The published range for brass is 102–125 GPa, so every point sits high rather than scattering around a value — a systematic offset, not noise.",
+          "Since E scales with L³, effective cantilever length is the only term that shifts every point by a similar proportion; 11 to 26 mm of unaccounted clamped length spans the entire published range.",
+        ],
+      },
+      {
+        heading: "Toolchain",
+        body: [
+          "Arduino Uno, DSS-M15S servo, HX711 load cell and amplifier, breadboard, steel ruler.",
+          "VSCode with PlatformIO; serial monitor for input and output.",
+        ],
+      },
+    ],
   },
   {
     slug: "crude-flow",
@@ -104,27 +141,113 @@ const projects: Project[] = [
     links: { repo: repoUrl("crude-flow") },
     featured: true,
     order: 1,
+    sections: [
+      {
+        heading: "System Design",
+        body: [
+          "Live AIS tanker tracking at global scale.",
+          "Conflict zone overlays with dynamic threat levels.",
+          "Maritime chokepoint monitoring.",
+          "Commodity price tracking.",
+          "News aggregation with severity tagging.",
+        ],
+      },
+      {
+        heading: "Technical Implementation",
+        body: [
+          "Next.js (App Router) with TypeScript.",
+          "Mapbox GL JS with GeoJSON and GPU-accelerated symbol layers.",
+          "A server-side WebSocket to aisstream.io, bridged to the browser as Server-Sent Events.",
+          "Server-side API proxying so no key reaches the client.",
+        ],
+      },
+      {
+        heading: "Key Engineering Features",
+        body: [
+          "One upstream AIS connection held on the server and shared across clients.",
+          "Vessel classification by ship type — tanker, product tanker, LNG carrier, VLCC and others.",
+          "Positions buffered and flushed to the map every five seconds rather than on every message.",
+          "Clustering below zoom 6 to keep thousands of simultaneous vessels renderable.",
+          "API caching sized to stay inside free-tier request limits.",
+        ],
+      },
+      {
+        heading: "Challenges & Learning",
+        body: [
+          "Handling real-time data streams efficiently at scale.",
+          "Designing a frontend architecture that stays responsive under live updates.",
+          "Balancing rendering performance against rich, layered visualisation.",
+        ],
+      },
+    ],
   },
   {
     slug: "3d-printing-prototyping",
     title: "3D Printer",
     category: "Design & Fabrication",
-    date: "TODO(copy): when this was built",
-    hook: "An Ender 3 V2 taken apart subsystem by subsystem — auto bed levelling, a printed extruder housing, recompiled firmware, and remote control from a Raspberry Pi.",
+    date: "Ongoing",
+    hook: "A consumer Ender 3 rebuilt subsystem by subsystem — custom firmware, auto bed levelling, remote monitoring, and an extruder housing printed on the printer it was for.",
     problem:
-      "A stock consumer printer fails in predictable places: the bed is trammed by hand before every print, the extruder skips on long jobs, and once you leave the room you have no idea whether it is still printing. Each is a separate limitation, and the fixes interact — hardware the firmware doesn't know about is just hardware that doesn't work.",
+      "A stock Ender 3 V2 is fine until you ask it for something specific. The bed has to be levelled by hand before anything important and still gives an inconsistent first layer; the stock extruder is a known mechanical weak point that shows up on exactly the long prints you can least afford to lose; and the machine tells you nothing until you walk back into the room and find eight hours of filament spaghetti. Three different subsystems, and fixing one keeps exposing the next.",
     approach:
-      "Treated each limitation as its own subsystem rather than replacing the machine. A BLTouch probe mounted and wired into the control board, the firmware configuration modified to enable it, then probe offsets calibrated and a bed mesh generated. A custom extruder housing designed and printed, with upgraded hotend and part cooling and a better nozzle, and the stock extruder assembly swapped out with tension and alignment set for consistent feeding. Firmware recompiled and flashed to match the upgraded hardware. OctoPrint on a Raspberry Pi 3B+ connected over USB, with a camera module for live monitoring.",
+      "Took each limitation as its own subsystem — identify what's actually failing, research the fix, fit it, then iterate until it holds. The upgrades chain into each other, which is the interesting part: fitting a BLTouch probe for automatic bed levelling meant the stock firmware no longer described the machine, so the next step was compiling Marlin from source with probe support and the motion settings the new hardware needed. Reliability meant replacing the extruder and designing a custom housing around it with upgraded hotend and part cooling — printed on the machine being upgraded. Monitoring meant a Raspberry Pi 3B+ running OctoPrint over USB with a camera module, so a print can be started, watched and killed from anywhere.",
     outcome:
-      "Running as a customised machine: first-layer accuracy good enough to drop the manual levelling step, extrusion consistent across material types on long prints, and full control and a live view from any device on the network. Begun at 15 and iterated on since. The honest limitation is that none of it was measured — the outcomes are observed reliability across repeated prints rather than numbers.",
-    tags: ["3D Printing", "CAD", "Firmware", "Raspberry Pi", "OctoPrint", "Calibration"],
+      "Started at 15 and still running, with the printer as its own test bed. Bed meshing replaced manual levelling entirely, which is what made the first layer repeatable rather than a thing to be nursed. Extrusion held across multiple materials and long durations once the extruder and cooling were sorted. The firmware compile was the point it stopped being a consumer appliance — once you're editing configuration files to match hardware you changed yourself, nothing about the machine is a black box any more.",
+    tags: ["CAD", "3D Printing", "Marlin Firmware", "Raspberry Pi", "Mechanical Design", "Prototyping", "Calibration"],
     image: "/projects/3d-printing.jpg",
     imageAlt:
-      "A desktop 3D printer on a workbench, mid-setup: filament spool on the left, LED light bar across the top of the frame, touchscreen controller on the right, and scrapers and printed parts around the base.",
+      "A modified Ender 3 V2 on a workbench mid-setup: filament spool at the left, LED bar across the top of the frame, touchscreen controller at the right, scrapers and printed parts around the base.",
     heroImage: "/projects/3d-printing.jpg",
     links: {},
     featured: true,
     order: 4,
+    sections: [
+      {
+        heading: "BLTouch Auto Bed Levelling",
+        body: [
+          "The problem. Manual bed levelling is a paper-under-the-nozzle ritual that has to be repeated constantly, and it still cannot correct for a bed that is not flat — only for one that is tilted. First layers stay unreliable however carefully it is done.",
+          "What I did. Mounted the BLTouch probe and wired it into the control board, configured firmware support for it, calibrated the probe offsets, and generated a bed mesh so the machine compensates for the actual surface rather than assuming a plane.",
+          "What changed. First-layer accuracy became repeatable instead of something to be nursed, and manual setup before a print effectively disappeared. This is also the upgrade that forced the next one — the stock firmware has no idea the probe exists.",
+        ],
+        images: ["/projects/3dprinter/bltouch-1.jpg"],
+      },
+      {
+        heading: "Custom Firmware Compilation",
+        body: [
+          "The problem. Stock firmware describes a stock printer. Once the hardware has changed, the firmware is actively wrong about the machine it is driving — it does not know there is a probe, and the motion settings are tuned for components no longer fitted.",
+          "What I did. Modified the Marlin configuration files to match the upgraded hardware, enabled BLTouch support and the advanced motion control settings the new setup needed, then compiled and flashed the result to the control board. Validated stability across multiple print sessions rather than assuming one good print meant it worked.",
+          "What changed. The firmware now matches the machine. More importantly it removed the last black box — every layer from the config file to the nozzle is something I have been inside.",
+        ],
+        images: ["/projects/3dprinter/firmware-1.jpg"],
+      },
+      {
+        heading: "Extruder Upgrade",
+        body: [
+          "The problem. The stock extruder is the printer's best-known failure point. It is the component most likely to give up partway through a long print, which is precisely when it costs the most.",
+          "What I did. Removed the stock assembly, fitted upgraded components, and adjusted tension and alignment for consistent feeding. Tested extrusion across multiple materials and print lengths rather than a single short test print.",
+          "What changed. Consistent extrusion across materials, and the mechanical failure risk on long prints substantially reduced.",
+        ],
+        images: ["/projects/3dprinter/extruder-upgrade-1.jpg", "/projects/3dprinter/extruder-upgrade-2.jpg"],
+      },
+      {
+        heading: "Custom 3D Printed Extruder Assembly",
+        body: [
+          "The problem. The stock extruder mounting and cooling arrangement is built to a price. Inconsistent part cooling shows up as poor layer adhesion and overhang quality, and that cannot be fixed by adjusting slicer settings alone.",
+          "What I did. Designed and printed a custom extruder housing, fitted upgraded fans for both hotend and part cooling, and replaced the stock nozzle. Aligned the assembly for consistent filament flow.",
+          "What changed. Better layer consistency and more reliable extrusion. Worth noting what this step actually is: the printer produced the parts used to upgrade itself, which is only possible because the earlier calibration work made it accurate enough to make its own components.",
+        ],
+        images: ["/projects/3dprinter/extruder-1.jpg"],
+      },
+      {
+        heading: "Raspberry Pi Integration — OctoPrint & Remote Monitoring",
+        body: [
+          "The problem. A print that fails in hour six fails silently. Without a way to see the machine you either sit with it or come back to a finished failure and a wasted spool.",
+          "What I did. Installed and configured OctoPrint on a Raspberry Pi 3B+, connected over USB for direct control of the printer, and set up network access so it could be reached from any device. Added a Pi camera module for a live stream of the print in progress.",
+          "What changed. Prints can be started, monitored and stopped from anywhere. A failure that would have run to completion now gets caught while there is still filament left to save.",
+        ],
+        images: ["/projects/3dprinter/pi-1.jpg", "/projects/3dprinter/pi-2.jpg"],
+      },
+    ],
   },
   {
     slug: "missile-trajectory-tracker",
@@ -145,12 +268,47 @@ const projects: Project[] = [
     links: { repo: repoUrl("missile-trajectory-tracker") },
     featured: true,
     order: 2,
+    sections: [
+      {
+        heading: "Guidance",
+        body: [
+          "Proportional navigation: acceleration command = N × closing velocity × line-of-sight rate.",
+          "Navigation constant of 4, inside the 3–5 band operational interceptors use.",
+          "Closing velocity taken as −(v_rel · LOS) and floored at 50 m/s.",
+          "Line-of-sight rate from a finite difference of the LOS unit vector between frames.",
+        ],
+      },
+      {
+        heading: "Missile Model",
+        body: [
+          "80 m/s² thrust along its own velocity vector, with a 900 m/s speed cap.",
+          "2.5 rad/s turn-rate limit and quadratic drag, so the guidance drives a vehicle that does not do exactly what it is told.",
+          "Terminates on a 60 m hit radius, ground impact, leaving the world volume, or a 60 s timeout.",
+        ],
+      },
+      {
+        heading: "Target Model",
+        body: [
+          "250 m/s cruise inside a 300–4500 m altitude band.",
+          "A continuous 0-to-1 threat level computed from missile range.",
+          "Evasion scales against that threat: turn rate 1.2 to 3.0 rad/s, pitch authority 15° to 50°, a speed boost, and shorter intervals between manoeuvres.",
+          "Hard break-turns perpendicular to the threat bearing.",
+        ],
+      },
+      {
+        heading: "Rendering",
+        body: [
+          "Custom perspective projection — spherical camera position, forward/right/up basis vectors, perspective divide — with orbit and zoom over an 8000 × 4000 × 5000 m world.",
+          "Written inside pygame rather than pulling in a 3-D engine. pygame>=2.5.0 is the entire dependency list.",
+        ],
+      },
+    ],
   },
   {
     slug: "honda-civic-projects",
     title: "Honda Civic Engineering Projects",
     category: "Automotive & Mechanical",
-    date: "TODO(copy): when this was built",
+    date: "", // TODO(copy): when this was built
     hook: "Diagnosing and repairing a 2006 Civic end to end — an intermittent no-start traced to the fuel pump, plus a head unit and amplifier wired in from the battery.",
     problem:
       "An intermittent starting fault hands you one symptom and a list of candidate causes — battery, ignition, relays, fuel delivery — and swapping parts until it stops is expensive and teaches you nothing about the car. The audio install had the opposite failure mode: the components matter far less than the power and ground paths, and getting those wrong puts engine noise through the speakers.",
@@ -166,6 +324,44 @@ const projects: Project[] = [
     links: {},
     featured: true,
     order: 6,
+    sections: [
+      {
+        heading: "Custom Head Unit Installation",
+        body: [
+          "Removed dashboard trim and the factory head unit without damaging clips.",
+          "Identified and mapped wiring between the factory harness and the new unit.",
+          "Connected power, ground and audio signal wiring, then mounted and aligned the unit.",
+        ],
+        images: ["/projects/honda/head-unit-1.jpg", "/projects/honda/head-unit-2.jpg"],
+      },
+      {
+        heading: "Amplifier & Subwoofer System",
+        body: [
+          "Routed a dedicated power cable from the battery with inline fuse protection.",
+          "Selected and prepared a solid ground point to keep electrical noise out of the signal path.",
+          "Ran RCA signal cables from head unit to amplifier and set gain to avoid clipping.",
+        ],
+        images: ["/projects/honda/subwoofer-1.jpg"],
+      },
+      {
+        heading: "Fuel Pump Diagnosis & Replacement",
+        body: [
+          "Symptoms were unreliable starting and inconsistent engine behaviour.",
+          "Eliminated battery, ignition and relay causes by testing each in turn.",
+          "Narrowed the fault to fuel delivery, then accessed, removed and replaced the pump assembly.",
+        ],
+        images: ["/projects/honda/fuel-pump-1.jpg", "/projects/honda/fuel-pump-2.jpg"],
+      },
+      {
+        heading: "Throttle Body Cleaning & Maintenance",
+        body: [
+          "Removed intake components to reach the throttle body.",
+          "Identified carbon deposits restricting airflow through the bore.",
+          "Cleaned the throttle body and reassembled the intake.",
+        ],
+        images: ["/projects/honda/throttle-body-1.jpg"],
+      },
+    ],
   },
   {
     slug: "friendly",
@@ -186,6 +382,43 @@ const projects: Project[] = [
     links: { repo: repoUrl("friendly", "AdamAzeb") },
     featured: true,
     order: 5,
+    sections: [
+      {
+        heading: "Core Concept",
+        body: [
+          "Instead of asking who is free, Friendly calculates the answer.",
+          "Aggregates availability across users and detects overlaps automatically.",
+          "Suggests times ranked by how many people are free, rather than opening a negotiation.",
+        ],
+      },
+      {
+        heading: "Key Features",
+        body: [
+          "Instant group creation and joining by invite code.",
+          "Real-time group and direct chat.",
+          "Weekly availability blocks feeding the suggestion engine.",
+          "Live location sharing on a map.",
+          "A friends system, session planning and RSVPs.",
+        ],
+      },
+      {
+        heading: "Technical Architecture",
+        body: [
+          "Next.js (App Router) with TypeScript and Tailwind CSS.",
+          "Firebase anonymous authentication for zero-friction onboarding.",
+          "Firestore with onSnapshot listeners for live sync across clients.",
+          "Fully serverless — no backend to run.",
+        ],
+      },
+      {
+        heading: "Engineering Highlights",
+        body: [
+          "Real-time state synchronisation across every connected user.",
+          "Availability matching computed client-side for fast local results.",
+          "Branch-per-developer with pull requests and a shared types file, so four people could work one codebase without standing on each other.",
+        ],
+      },
+    ],
   },
   {
     slug: "storm-formation-analysis",
@@ -206,6 +439,34 @@ const projects: Project[] = [
     links: { repo: repoUrl("stormwatch-ai") },
     featured: false,
     order: 7,
+    sections: [
+      {
+        heading: "Approach",
+        body: [
+          "Satellite imagery analysis of cloud formations.",
+          "Weather API integration for temperature, pressure and humidity.",
+          "A visual analysis pipeline for detecting atmospheric patterns.",
+          "Aimed at early identification of cumulonimbus development.",
+        ],
+      },
+      {
+        heading: "Technical Implementation",
+        body: [
+          "Python-based analysis system.",
+          "OpenWeatherMap API integration.",
+          "Satellite data ingestion and processing pipeline.",
+          "Image-based feature extraction and pattern analysis.",
+        ],
+      },
+      {
+        heading: "Challenges & Learning",
+        body: [
+          "Working with heterogeneous external APIs and data formats.",
+          "Handling and processing large satellite image datasets.",
+          "Designing the pipeline in stages so a model could be added later.",
+        ],
+      },
+    ],
   },
   {
     slug: "portfolio-website",
@@ -226,6 +487,37 @@ const projects: Project[] = [
     links: { repo: repoUrl("Portfolio-Website") },
     featured: false,
     order: 8,
+    sections: [
+      {
+        heading: "Design Goals",
+        body: [
+          "An aerospace and electronics-inspired visual theme.",
+          "Strong typographic hierarchy for technical readability.",
+          "Animation that is purposeful rather than decorative.",
+          "Responsive across all device sizes.",
+        ],
+      },
+      {
+        heading: "Technical Stack",
+        body: [
+          "Next.js 16 with App Router and TypeScript.",
+          "Tailwind CSS v4 for utility-first styling.",
+          "Framer Motion for scroll-driven and entrance animation.",
+          "An SVG airfoil with streamlines computed in JavaScript — no canvas.",
+          "Vercel deployment with Analytics and Speed Insights.",
+        ],
+      },
+      {
+        heading: "Key Features",
+        body: [
+          "A Solari flip-board hero that flips the name into place.",
+          "A Göttingen 386 airfoil with skill labels riding animated streamlines.",
+          "Project cards that show their imagery and links without hover, so they work on touch.",
+          "A contact form wired through the Resend API.",
+          "Reduced-motion support throughout, and images served through the Next image pipeline.",
+        ],
+      },
+    ],
   },
   
 ];
@@ -237,13 +529,3 @@ export const allProjects: Project[] = [...projects].sort(byOrder);
 
 /** The homepage grid. Driven by `featured`, never a hardcoded slug list. */
 export const selectedProjects: Project[] = allProjects.filter((p) => p.featured);
-
-/** Fields that must hold real copy before the site ships. */
-export const COPY_FIELDS = ["date", "hook", "problem", "approach", "outcome", "imageAlt"] as const;
-
-/** Every project/field pair still awaiting copy. Used by the build-time check. */
-export function copyPlaceholders(): { slug: string; field: string }[] {
-  return projects.flatMap((p) =>
-    COPY_FIELDS.filter((f) => isPlaceholder(p[f])).map((field) => ({ slug: p.slug, field }))
-  );
-}
