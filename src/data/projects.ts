@@ -182,7 +182,7 @@ const projects: Project[] = [
     ],
   },
   {
-    slug: "3d-printing-prototyping",
+    slug: "3d-printer",
     title: "3D Printer",
     category: "Design & Fabrication",
     date: "Ongoing",
