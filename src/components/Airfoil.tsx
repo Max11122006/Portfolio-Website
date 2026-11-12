@@ -146,9 +146,10 @@ const STREAMLINES = [
 
 export default function Airfoil() {
   return (
-    <figure className="schematic-grid overflow-hidden rounded-xl border border-border bg-background">
+    <div className="schematic-grid overflow-hidden rounded-xl border border-border bg-background">
       <svg
-        aria-hidden="true"
+        role="img"
+        aria-label="Illustration of airflow around a wing cross-section"
         viewBox="0 65 1200 420"
         className="block w-full"
       >
@@ -173,9 +174,6 @@ export default function Airfoil() {
           vectorEffect="non-scaling-stroke"
         />
       </svg>
-      <figcaption className="border-t border-border bg-background px-4 py-3 font-mono text-xs text-muted">
-        Göttingen 386 airfoil · illustrative streamlines
-      </figcaption>
-    </figure>
+    </div>
   );
 }

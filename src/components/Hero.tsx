@@ -18,11 +18,7 @@ export default function Hero() {
             ]}
           />
         </div>
-        <p className="mx-auto mt-7 max-w-lg text-base leading-relaxed text-muted sm:text-lg">
-          I study aerospace engineering at Heriot-Watt and build across simulation,
-          hands-on testing and software.
-        </p>
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
+        <div className="mt-8 flex flex-wrap justify-center gap-3 sm:mt-10">
           <a href="#projects" className="portfolio-button portfolio-button-primary">
             View projects
           </a>
