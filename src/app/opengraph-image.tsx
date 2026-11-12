@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 // Next wires this into og:image and twitter:image automatically.
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Maksymilian Dubowski — BEng Aerospace Engineering, Edinburgh";
+export const alt = "Maksymilian Dubowski — MEng Aerospace Engineering, Edinburgh";
 
 // Mirrors the hero: light graph-paper ground, dark split-flap board, name in
 // white over the discipline in amber. Satori supports flexbox only — no grid.
@@ -58,7 +58,7 @@ export default function OpenGraphImage() {
             {"MAKSYMILIAN DUBOWSKI".split("").map((c, i) => tile(c, i, "#F0F0F0"))}
           </div>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            {"BENG AEROSPACE ENG".split("").map((c, i) => tile(c, i, "#FFBB33"))}
+            {"MENG AEROSPACE ENG".split("").map((c, i) => tile(c, i, "#FFBB33"))}
           </div>
         </div>
 

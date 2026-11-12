@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { FadeIn, StaggerContainer, StaggerItem } from "@/components/MotionPrimitives";
 import BreadboardCard from "@/components/BreadboardCard";
 import { allProjects } from "@/data/projects";
 
@@ -59,11 +58,11 @@ const repoMeta: RepoMeta[] = [
   },
   {
     slug: "portfolio-website",
-    description: "Aerospace-themed engineering portfolio built with Next.js, Tailwind CSS, Framer Motion, and Three.js.",
+    description: "Aerospace-themed internship portfolio built with Next.js, TypeScript and Tailwind CSS.",
     category: "personal",
     language: "TypeScript",
     languageColor: "#3178c6",
-    topics: ["nextjs", "portfolio", "threejs", "tailwind"],
+    topics: ["nextjs", "portfolio", "typescript", "tailwind"],
     lastUpdated: "2026-09",
   },
 
@@ -79,6 +78,15 @@ const repoMeta: RepoMeta[] = [
   },
 
   // Hackathon
+  {
+    slug: "backed",
+    description: "Second-place Build with Gemma prototype using a simulated study prediction market and a Python backend.",
+    category: "hackathon",
+    language: "Python",
+    languageColor: "#3572A5",
+    topics: ["gemma", "multimodal-ai", "study-tools"],
+    lastUpdated: "2026-07",
+  },
   {
     slug: "friendly",
     description: "Mobile-first social coordination platform with automated availability matching, real-time chat, and live location features.",
@@ -102,10 +110,10 @@ const repos: Repo[] = repoMeta.map((meta) => {
   return { ...meta, url, name: url.split("/").pop()! };
 });
 
-const categories: { key: RepoCategory; label: string; icon: string; ledColor: string }[] = [
-  { key: "university", label: "University", icon: "🎓", ledColor: "#3b82f6" },
-  { key: "hackathon", label: "Hackathons", icon: "⚡", ledColor: "#eab308" },
-  { key: "personal", label: "Personal", icon: "🔧", ledColor: "#22c55e" },
+const categories: { key: RepoCategory; label: string }[] = [
+  { key: "university", label: "University" },
+  { key: "hackathon", label: "Hackathons" },
+  { key: "personal", label: "Personal" },
 ];
 
 function RepoCard({ repo }: { repo: Repo }) {
@@ -168,138 +176,42 @@ function RepoCard({ repo }: { repo: Repo }) {
 
 export default function GitHubPage() {
   const [activeCategory, setActiveCategory] = useState<RepoCategory>("university");
-
-  const filteredRepos = repos.filter((r) => r.category === activeCategory);
-  const activeCat = categories.find((c) => c.key === activeCategory)!;
+  const filteredRepos = repos.filter((repo) => repo.category === activeCategory);
+  const activeLabel = categories.find((category) => category.key === activeCategory)?.label;
 
   return (
-    <main className="bg-background min-h-screen">
+    <>
       <Navbar />
+      <main id="main-content" tabIndex={-1} className="relative isolate min-h-screen px-5 py-14 sm:px-6 sm:py-20">
+        <div aria-hidden="true" className="schematic-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-72" />
+        <div className="mx-auto max-w-5xl">
+          <h1 className="portfolio-heading">Source code</h1>
+          <p className="mt-3 max-w-xl text-muted">
+            Selected public repositories from coursework, hackathons and personal projects.
+          </p>
 
-      <section className="pt-32 pb-24 md:pb-36 px-6">
-        <div className="fixed inset-0 schematic-grid pointer-events-none opacity-50" />
-
-        <div className="relative max-w-5xl mx-auto">
-          <FadeIn>
-            <p className="text-xs tracking-[0.25em] uppercase text-muted mb-6 font-mono">
-              {"// GITHUB_REPOSITORIES"}
-            </p>
-          </FadeIn>
-
-          <FadeIn delay={0.1}>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15] text-foreground mb-4">
-              Source <span className="text-accent">code.</span>
-            </h1>
-            <p className="text-base text-muted mb-12 max-w-xl">
-              All my repositories, categorised by context. University coursework, hackathon builds,
-              and personal tinkering — each with its own purpose and stack.
-            </p>
-          </FadeIn>
-
-          {/* Category tabs — styled like a DIP switch row */}
-          <FadeIn delay={0.2}>
-            <div className="flex flex-wrap gap-3 mb-12">
-              {categories.map((cat) => {
-                const isActive = activeCategory === cat.key;
-                const count = repos.filter((r) => r.category === cat.key).length;
-                return (
-                  <button
-                    key={cat.key}
-                    onClick={() => setActiveCategory(cat.key)}
-                    className={`
-                      relative flex items-center gap-2.5 px-5 py-3 rounded-lg font-mono text-sm transition-all duration-300 cursor-pointer
-                      ${
-                        isActive
-                          ? "bg-[#f5f2eb] border-2 border-border text-foreground shadow-md"
-                          : "bg-surface border-2 border-border text-muted hover:border-accent/30 hover:text-foreground"
-                      }
-                    `}
-                  >
-                    <span className="text-base">{cat.icon}</span>
-                    <span>{cat.label}</span>
-                    <span
-                      className={`
-                        text-[10px] px-1.5 py-0.5 rounded-sm font-mono
-                        ${isActive ? "bg-accent/10 text-accent" : "bg-surface-alt text-muted/60"}
-                      `}
-                    >
-                      {count}
-                    </span>
-                    {isActive && (
-                      <div
-                        className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full"
-                        style={{
-                          backgroundColor: cat.ledColor,
-                          boxShadow: `0 0 8px ${cat.ledColor}`,
-                        }}
-                      />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </FadeIn>
-
-          {/* Active category header */}
-          <div className="flex items-center gap-3 mb-8">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{
-                backgroundColor: activeCat.ledColor,
-                boxShadow: `0 0 10px ${activeCat.ledColor}60`,
-              }}
-            />
-            <h2 className="text-lg font-semibold text-foreground">
-              {activeCat.label} Repositories
-            </h2>
-            <span className="text-xs font-mono text-muted">
-              ({filteredRepos.length} repos)
-            </span>
+          <div role="group" aria-label="Repository categories" className="mt-7 flex flex-wrap gap-2">
+            {categories.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setActiveCategory(key)}
+                aria-pressed={activeCategory === key}
+                className="portfolio-button portfolio-button-small cursor-pointer aria-pressed:border-foreground aria-pressed:bg-foreground aria-pressed:text-white"
+              >
+                {label}
+              </button>
+            ))}
           </div>
 
-          {/* Repo grid */}
-          <StaggerContainer
-            key={activeCategory}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-5"
-            staggerDelay={0.08}
-          >
+          <section aria-label={`${activeLabel} repositories`} className="mt-7 grid gap-5 md:grid-cols-2">
             {filteredRepos.map((repo) => (
-              <StaggerItem key={repo.slug}>
-                <RepoCard repo={repo} />
-              </StaggerItem>
+              <RepoCard key={repo.slug} repo={repo} />
             ))}
-          </StaggerContainer>
-
-          {/* Stats footer */}
-          <FadeIn delay={0.3}>
-            <div className="mt-16 pt-8 border-t border-border">
-              <div className="flex flex-wrap gap-8 text-center">
-                {categories.map((cat) => {
-                  const catRepos = repos.filter((r) => r.category === cat.key);
-                  return (
-                    <div key={cat.key} className="flex-1 min-w-[120px]">
-                      <p className="text-2xl font-bold text-foreground">{catRepos.length}</p>
-                      <p className="text-xs text-muted font-mono mt-1">{cat.label}</p>
-                    </div>
-                  );
-                })}
-                <div className="flex-1 min-w-[120px]">
-                  <p className="text-2xl font-bold text-foreground">{repos.length}</p>
-                  <p className="text-xs text-muted font-mono mt-1">Total Repos</p>
-                </div>
-                <div className="flex-1 min-w-[120px]">
-                  <p className="text-2xl font-bold text-foreground">
-                    {new Set(repos.map((r) => r.language)).size}
-                  </p>
-                  <p className="text-xs text-muted font-mono mt-1">Languages</p>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
+          </section>
         </div>
-      </section>
-
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }

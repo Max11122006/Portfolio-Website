@@ -3,11 +3,11 @@
 @theme inline {
   --color-background: #f5f5f0;
   --color-foreground: #1A1410;
-  --color-accent: #B87333;
+  --color-accent: #8a5125;
   --color-accent-light: #D4956A;
   --color-surface: #ffffff;
   --color-surface-alt: #eaeae5;
-  --color-muted: #8C7D6A;
+  --color-muted: #675a4b;
   --color-border: #d4d4cc;
   --color-border-light: #e8e8e0;
   --color-pcb-green: #1b5e20;
@@ -20,7 +20,7 @@
   --color-led-green: #22c55e;
   --color-led-blue: #3b82f6;
   --color-led-yellow: #eab308;
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
 }
 
@@ -34,7 +34,6 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -57,27 +56,6 @@ body {
 ::selection {
   background: rgba(184, 115, 51, 0.2);
   color: #1A1410;
-}
-
-/* Section divider */
-.section-divide {
-  border-top: 1px solid var(--color-border);
-}
-
-/* Subtle accent underline */
-.accent-underline {
-  position: relative;
-  display: inline-block;
-}
-.accent-underline::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--color-accent);
-  opacity: 0.4;
 }
 
 /* ===== SOLDERLESS BREADBOARD CARD STYLES ===== */
@@ -258,97 +236,115 @@ body {
 .wire-deco--yellow { background: #eab308; }
 .wire-deco--orange { background: #f97316; }
 
-/* ===== SOLARI SPLIT-FLAP BOARD ===== */
+@layer components {
+  .portfolio-heading {
+    @apply text-3xl font-semibold leading-tight tracking-tight sm:text-4xl;
+  }
 
+  .portfolio-link {
+    @apply inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-accent underline-offset-4 hover:underline;
+  }
+
+  .portfolio-button {
+    @apply inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-accent/60 hover:bg-surface-alt sm:px-5;
+  }
+
+  .portfolio-button-primary {
+    @apply border-foreground bg-foreground text-white hover:border-foreground hover:bg-foreground/90;
+  }
+
+  .portfolio-button-small {
+    @apply px-3 sm:px-4;
+  }
+
+  .portfolio-field {
+    @apply w-full rounded-md border border-border bg-surface px-3 py-2.5 text-sm text-foreground;
+  }
+}
+
+:where(a, button, input, textarea, summary):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+section[id], #main-content {
+  scroll-margin-top: 4rem;
+}
+
+/* Solari split-flap display */
 .solari-board {
+  --tile-width: clamp(12px, 3.8vw, 18px);
+  --tile-gap: 1px;
   display: inline-flex;
+  max-width: 100%;
   flex-direction: column;
-  gap: 6px;
-  padding: 24px 48px;
-  background: #111;
-  border-radius: 8px;
+  gap: 5px;
+  padding: 12px 10px;
   border: 1px solid #333;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 2px 8px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  background: #111;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 18%);
 }
 
 .solari-row {
   display: flex;
-  gap: 2px;
+  flex-wrap: wrap;
   justify-content: center;
+  gap: 5px calc(var(--tile-width) * 0.5);
+}
+
+.solari-word {
+  display: flex;
+  gap: var(--tile-gap);
 }
 
 .solari-flap-module {
-  width: 28px;
-  height: 42px;
+  width: var(--tile-width);
+  height: calc(var(--tile-width) * 1.43);
   flex-shrink: 0;
+  perspective: 200px;
 }
 
-@media (min-width: 768px) {
-  .solari-flap-module {
-    width: 34px;
-    height: 50px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .solari-flap-module {
-    width: 38px;
-    height: 54px;
+@media (min-width: 640px) {
+  .solari-board {
+    --tile-width: clamp(20px, 3.2vw, 36px);
+    --tile-gap: 2px;
+    gap: 6px;
+    padding: 22px 28px;
   }
 }
 
 .solari-flap-inner {
   position: relative;
-  width: 100%;
   height: 100%;
-  border-radius: 3px;
   overflow: hidden;
-  background: #1A1A1A;
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.4),
-    0 1px 0 rgba(255, 255, 255, 0.03);
+  border-radius: 3px;
+  background: #1a1a1a;
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 40%);
 }
 
 .solari-half {
   position: absolute;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   height: 50%;
   overflow: hidden;
   display: flex;
-  align-items: center;
   justify-content: center;
   backface-visibility: hidden;
 }
 
 .solari-half span {
-  font-family: var(--font-mono), 'JetBrains Mono', monospace;
-  font-size: 22px;
+  display: block;
+  font-family: var(--font-mono), monospace;
+  font-size: calc(var(--tile-width) * 0.79);
   font-weight: 600;
   line-height: 1;
-  display: block;
   user-select: none;
-}
-
-@media (min-width: 768px) {
-  .solari-half span {
-    font-size: 26px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .solari-half span {
-    font-size: 30px;
-  }
 }
 
 .solari-top {
   top: 0;
   align-items: flex-end;
-  padding-bottom: 0;
 }
 
 .solari-top span {
@@ -358,7 +354,6 @@ body {
 .solari-bottom {
   bottom: 0;
   align-items: flex-start;
-  padding-top: 0;
 }
 
 .solari-bottom span {
@@ -367,61 +362,47 @@ body {
 
 .solari-split-line {
   position: absolute;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   top: 50%;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.6);
   z-index: 5;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+  height: 1px;
+  background: rgb(0 0 0 / 60%);
 }
 
 .solari-flap-animate {
-  z-index: 4;
-  background: #1A1A1A;
+  display: none;
 }
 
-.solari-flap-top-out {
-  transform-origin: bottom center;
-  animation: solari-top-out 120ms ease-in forwards;
+@media (prefers-reduced-motion: no-preference) {
+  .solari-flap-animate {
+    display: flex;
+    z-index: 4;
+    background: #1a1a1a;
+  }
+
+  .solari-flap-top-out {
+    transform-origin: bottom center;
+    animation: solari-top-out 110ms ease-in var(--flip-delay) both;
+  }
+
+  .solari-flap-bottom-in {
+    transform-origin: top center;
+    animation: solari-bottom-in 110ms ease-out calc(var(--flip-delay) + 110ms) both;
+  }
 }
 
 @keyframes solari-top-out {
-  0% { transform: rotateX(0deg); }
-  100% { transform: rotateX(-90deg); }
-}
-
-.solari-flap-bottom-in {
-  transform-origin: top center;
-  animation: solari-bottom-in 120ms ease-out forwards;
+  from { transform: rotateX(0deg); }
+  to { transform: rotateX(-90deg); }
 }
 
 @keyframes solari-bottom-in {
-  0% { transform: rotateX(90deg); }
-  100% { transform: rotateX(0deg); }
+  from { transform: rotateX(90deg); }
+  to { transform: rotateX(0deg); }
 }
 
-/* Mobile: allow row wrapping for long lines */
-@media (max-width: 767px) {
-  .solari-row {
-    flex-wrap: wrap;
-  }
-  .solari-board {
-    padding: 10px 12px;
-    max-width: 100%;
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   Reduced motion
-   Honours the OS-level setting. CSS animations and transitions collapse to
-   near-zero here; the JS-driven reveals are handled in MotionPrimitives and
-   SolariFlap, which skip their hidden state entirely rather than rushing it.
-   --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
