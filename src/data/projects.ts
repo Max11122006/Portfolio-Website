@@ -556,7 +556,7 @@ const projects: Project[] = [
         heading: "Key Features",
         body: [
           "A Solari flip-board hero that flips the name into place.",
-          "A close-up of my custom 3D-printed extruder housing beside the technical skills.",
+          "Technical skills grouped with links to projects that put them into practice.",
           "Project cards that show their imagery and links without hover, so they work on touch.",
           "A contact form wired through the Resend API.",
           "Reduced-motion support throughout, and images served through the Next image pipeline.",

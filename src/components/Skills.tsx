@@ -1,17 +1,23 @@
-import Image from "next/image";
+import Link from "next/link";
 
 const skills = [
   {
     title: "Engineering & simulation",
     tools: "ANSYS Fluent, Abaqus, MATLAB, Autodesk Inventor",
+    project: "Missile Trajectory Tracker",
+    href: "/projects/missile-trajectory-tracker",
   },
   {
     title: "Software & data",
     tools: "Python, C++, TypeScript, Next.js, React, SQL",
+    project: "PackSync",
+    href: "/projects/packsync",
   },
   {
     title: "Prototyping & testing",
     tools: "Arduino, load-cell instrumentation, FDM 3D printing",
+    project: "Ender 3 V2 upgrades",
+    href: "/projects/3d-printer",
   },
 ];
 
@@ -20,25 +26,19 @@ export default function Skills() {
     <section id="skills" className="border-t border-border bg-surface px-5 py-14 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-6xl">
         <h2 className="portfolio-heading">Technical skills</h2>
-        <div className="mt-6 grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] md:gap-12">
-          <dl className="divide-y divide-border border-y border-border">
-            {skills.map(({ title, tools }) => (
-              <div key={title} className="py-3.5">
-                <dt className="font-semibold">{title}</dt>
-                <dd className="mt-1 text-sm leading-relaxed text-muted sm:text-base">{tools}</dd>
+        <ul className="mt-6 grid gap-4 md:grid-cols-3 md:gap-5">
+          {skills.map(({ title, tools, project, href }) => (
+            <li key={title} className="flex flex-col rounded-xl border border-border border-t-2 border-t-accent/60 bg-background p-5 sm:p-6">
+              <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
+              <p className="mb-5 mt-2 text-sm leading-relaxed text-muted sm:text-base">{tools}</p>
+              <div className="mt-auto border-t border-border pt-4">
+                <Link href={href} className="portfolio-link">
+                  {project} <span aria-hidden="true">→</span>
+                </Link>
               </div>
-            ))}
-          </dl>
-          <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-surface-alt md:aspect-[2/1]">
-            <Image
-              src="/projects/3dprinter/extruder-1.jpg"
-              alt="Orange 3D-printed extruder housing and cable guides fitted to an Ender 3 V2."
-              fill
-              sizes="(min-width: 1152px) 580px, (min-width: 768px) 50vw, 94vw"
-              className="object-cover"
-            />
-          </div>
-        </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
