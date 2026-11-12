@@ -20,7 +20,6 @@ An aerospace-themed portfolio for internship applications, with selected project
 ## Highlights
 
 - **Solari split-flap display** — A brief CSS reveal with a static display under reduced motion
-- **Göttingen 386 airfoil** — An SVG illustration with streamlines computed from the airfoil geometry
 - **Project archive** — Case studies and featured projects drawn from a shared data file
 - **Contact and CV** — A Resend-backed contact form and a direct PDF download
 
@@ -30,7 +29,6 @@ An aerospace-themed portfolio for internship applications, with selected project
 |-------|------|
 | Framework | Next.js 16 (App Router) |
 | UI | React 19, Tailwind CSS 4 |
-| Illustration | SVG |
 | Animation | CSS, Framer Motion |
 | Language | TypeScript |
 | Analytics | Vercel Analytics, Speed Insights |

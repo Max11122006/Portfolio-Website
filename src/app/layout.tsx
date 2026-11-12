@@ -30,7 +30,6 @@ export const metadata: Metadata = {
     "aerospace engineering",
     "embedded systems",
     "Heriot-Watt",
-    "Edinburgh",
     "portfolio",
     "Maksymilian Dubowski",
   ],

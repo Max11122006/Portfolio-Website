@@ -6,9 +6,6 @@ export default function Hero() {
     <section className="relative isolate border-b border-border bg-linear-to-b from-surface to-background px-5 py-14 text-center sm:py-20">
       <div aria-hidden="true" className="schematic-grid pointer-events-none absolute inset-0 -z-10" />
       <div className="mx-auto max-w-6xl">
-        <p className="mb-5 font-mono text-xs uppercase tracking-[0.18em] text-muted sm:mb-7">
-          Edinburgh, Scotland
-        </p>
         <div className="relative">
           <h1 className="sr-only">Maksymilian Dubowski — MEng Aerospace Engineering</h1>
           <SolariBoard

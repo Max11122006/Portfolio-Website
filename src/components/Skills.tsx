@@ -1,4 +1,4 @@
-import Airfoil from "./Airfoil";
+import Image from "next/image";
 
 const skills = [
   {
@@ -29,7 +29,15 @@ export default function Skills() {
               </div>
             ))}
           </dl>
-          <Airfoil />
+          <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-surface-alt md:aspect-[2/1]">
+            <Image
+              src="/projects/3dprinter/extruder-1.jpg"
+              alt="Orange 3D-printed extruder housing and cable guides fitted to an Ender 3 V2."
+              fill
+              sizes="(min-width: 1152px) 580px, (min-width: 768px) 50vw, 94vw"
+              className="object-cover"
+            />
+          </div>
         </div>
       </div>
     </section>

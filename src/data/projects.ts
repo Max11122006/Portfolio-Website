@@ -523,7 +523,7 @@ const projects: Project[] = [
     problem:
       "A recruiter should be able to find my CV and understand what I built on a first visit. The original site’s animations and overlapping skills sections slowed down that path.",
     approach:
-      "I kept the Solari split-flap board, schematic grid and Göttingen 386 airfoil as references to aviation and engineering. I moved the CV and selected work to the top and made the project pages share one data source. The stack is Next.js, TypeScript and Tailwind CSS.",
+      "I kept the Solari split-flap board and schematic grid as references to aviation and engineering. I moved the CV and selected work to the top and made the project pages share one data source. The stack is Next.js, TypeScript and Tailwind CSS.",
     outcome:
       "The homepage surfaces four case studies and a direct CV download. The project archive uses the same records as the detail pages, and readers can see project images and links on touchscreens, with a keyboard or with reduced motion enabled.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "SVG", "Vercel"],
@@ -549,7 +549,6 @@ const projects: Project[] = [
           "Next.js 16 with App Router and TypeScript.",
           "Tailwind CSS v4 for utility-first styling.",
           "A brief CSS split-flap reveal with a static display under reduced motion.",
-          "An SVG airfoil with streamlines computed in JavaScript — no canvas.",
           "Vercel deployment with Analytics and Speed Insights.",
         ],
       },
@@ -557,7 +556,7 @@ const projects: Project[] = [
         heading: "Key Features",
         body: [
           "A Solari flip-board hero that flips the name into place.",
-          "A Göttingen 386 airfoil illustration beside the technical skills.",
+          "A close-up of my custom 3D-printed extruder housing beside the technical skills.",
           "Project cards that show their imagery and links without hover, so they work on touch.",
           "A contact form wired through the Resend API.",
           "Reduced-motion support throughout, and images served through the Next image pipeline.",
