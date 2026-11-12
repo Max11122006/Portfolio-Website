@@ -1,213 +1,95 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FadeIn } from "./MotionPrimitives";
+import type { FormEvent } from "react";
 import { SOCIAL, CV } from "@/lib/links";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-type Status = "idle" | "sending" | "success" | "error";
+type Feedback = { status: "idle" | "sending" | "success" | "error"; message?: string };
 
 export default function Contact() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<Status>("idle");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [feedback, setFeedback] = useState<Feedback>({ status: "idle" });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const fields = new FormData(form);
+    const name = String(fields.get("name") ?? "").trim();
+    const email = String(fields.get("email") ?? "").trim();
+    const message = String(fields.get("message") ?? "").trim();
 
-    // Client-side validation
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      setStatus("error");
-      setErrorMessage("Please fill in all fields.");
+    if (!name || !email || !message) {
+      setFeedback({ status: "error", message: "Please fill in all fields." });
       return;
     }
     if (!EMAIL_RE.test(email)) {
-      setStatus("error");
-      setErrorMessage("Please enter a valid email address.");
+      setFeedback({ status: "error", message: "Please enter a valid email address." });
       return;
     }
 
-    setStatus("sending");
-    setErrorMessage("");
+    setFeedback({ status: "sending" });
 
     try {
-      const res = await fetch("/api/contact", {
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, message }),
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setStatus("error");
-        setErrorMessage(data.error || "Something went wrong.");
+      if (!response.ok) {
+        const data = await response.json();
+        setFeedback({ status: "error", message: data.error || "Something went wrong." });
         return;
       }
 
-      setStatus("success");
-      setName("");
-      setEmail("");
-      setMessage("");
+      form.reset();
+      setFeedback({ status: "success", message: "Message sent. I’ll be in touch soon." });
     } catch {
-      setStatus("error");
-      setErrorMessage("Failed to send. Please try again.");
+      setFeedback({ status: "error", message: "Failed to send. Please try again." });
     }
   }
 
   return (
-    <section
-      id="contact"
-      className="relative py-24 md:py-36 px-6 section-divide"
-    >
-      <div className="max-w-2xl mx-auto">
-        <FadeIn>
-          <p className="text-xs tracking-[0.25em] uppercase text-muted mb-6 text-center font-mono">
-            {"// CONTACT"}
+    <section id="contact" className="border-t border-border px-5 py-14 sm:px-6 sm:py-20">
+      <div className="mx-auto grid max-w-6xl gap-7 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] md:gap-12">
+        <div>
+          <h2 className="portfolio-heading">Get in touch</h2>
+          <p className="mt-4 max-w-sm leading-relaxed text-muted">
+            I’m open to internship opportunities in engineering and software.
           </p>
-        </FadeIn>
-
-        <FadeIn delay={0.1}>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15] text-foreground mb-4 text-center">
-            Get in <span className="text-accent">touch.</span>
-          </h2>
-        </FadeIn>
-
-        <FadeIn delay={0.15}>
-          <p className="text-base text-muted text-center mb-12 max-w-md mx-auto">
-            Open to opportunities, collaborations, and conversations about
-            engineering, aviation, and technology.
-          </p>
-        </FadeIn>
-
-        <FadeIn delay={0.2}>
-          <div className="bg-surface border border-border rounded-xl p-8 md:p-10">
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-5"
-            >
-              {/* Name */}
-              <div>
-                <label className="block text-xs tracking-[0.12em] uppercase text-muted mb-1.5">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  autoComplete="name"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-background border border-border rounded-lg px-4 py-3 text-foreground text-sm placeholder-muted/50 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors"
-                  placeholder="Your name"
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-xs tracking-[0.12em] uppercase text-muted mb-1.5">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-background border border-border rounded-lg px-4 py-3 text-foreground text-sm placeholder-muted/50 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors"
-                  placeholder="your@email.com"
-                />
-              </div>
-
-              {/* Message */}
-              <div>
-                <label className="block text-xs tracking-[0.12em] uppercase text-muted mb-1.5">
-                  Message
-                </label>
-                <textarea
-                  rows={4}
-                  name="message"
-                  required
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="w-full bg-background border border-border rounded-lg px-4 py-3 text-foreground text-sm placeholder-muted/50 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-colors resize-none"
-                  placeholder="Tell me about your project or opportunity..."
-                />
-              </div>
-
-              {/* Submit */}
-              <motion.button
-                whileHover={status !== "sending" ? { scale: 1.01 } : {}}
-                whileTap={status !== "sending" ? { scale: 0.99 } : {}}
-                type="submit"
-                disabled={status === "sending"}
-                className="w-full py-3 rounded-lg bg-foreground text-white text-sm font-medium hover:bg-foreground/90 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {status === "sending" ? "Sending..." : "Send Message"}
-              </motion.button>
-
-              {/* Feedback */}
-              <AnimatePresence mode="wait">
-                {status === "success" && (
-                  <motion.p
-                    key="success"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="text-sm text-accent text-center"
-                  >
-                    Message sent — I&apos;ll be in touch soon.
-                  </motion.p>
-                )}
-                {status === "error" && (
-                  <motion.p
-                    key="error"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="text-sm text-red-500 text-center"
-                  >
-                    {errorMessage}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </form>
-
-            {/* Links */}
-            <div className="flex items-center justify-center gap-6 mt-8 pt-6 border-t border-border-light">
-              <a
-                href={SOCIAL.email}
-                className="text-sm text-muted hover:text-accent transition-colors"
-              >
-                Email
-              </a>
-              <span className="w-px h-4 bg-border" />
-              <a
-                href={SOCIAL.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-muted hover:text-accent transition-colors"
-              >
-                LinkedIn
-              </a>
-              <span className="w-px h-4 bg-border" />
-              <a
-                href={CV.href}
-                download={CV.downloadName}
-                target="_blank"
-                rel="noopener"
-                className="text-sm text-muted hover:text-accent transition-colors"
-              >
-                Download CV
-              </a>
-            </div>
+          <div className="mt-5 flex flex-wrap items-center gap-4">
+            <a href={SOCIAL.email} className="portfolio-link">Email</a>
+            <a href={SOCIAL.linkedin} className="portfolio-link">LinkedIn</a>
+            <a href={CV.href} download={CV.downloadName} className="portfolio-link">Download CV</a>
           </div>
-        </FadeIn>
+        </div>
+        <form method="post" onSubmit={handleSubmit} className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 sm:p-6">
+          <div>
+            <label htmlFor="contact-name" className="mb-1.5 block text-sm font-medium">Name</label>
+            <input id="contact-name" name="name" autoComplete="name" required className="portfolio-field" />
+          </div>
+          <div>
+            <label htmlFor="contact-email" className="mb-1.5 block text-sm font-medium">Email</label>
+            <input id="contact-email" type="email" name="email" autoComplete="email" required className="portfolio-field" />
+          </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="contact-message" className="mb-1.5 block text-sm font-medium">Message</label>
+            <textarea id="contact-message" rows={4} name="message" required className="portfolio-field" />
+          </div>
+          <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
+            <button
+              type="submit"
+              disabled={feedback.status === "sending"}
+              className="portfolio-button portfolio-button-primary cursor-pointer disabled:cursor-wait disabled:opacity-65"
+            >
+              {feedback.status === "sending" ? "Sending…" : "Send message"}
+            </button>
+            <p role="status" className={`text-sm ${feedback.status === "error" ? "text-red-700" : "text-accent"}`}>
+              {feedback.message}
+            </p>
+          </div>
+        </form>
       </div>
     </section>
   );

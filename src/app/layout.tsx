@@ -20,7 +20,7 @@ const SITE_URL = "https://www.maxdubowski.com";
 
 // Feeds <meta description>, og:description and twitter:description.
 const DESCRIPTION =
-  "Aerospace engineering student in Edinburgh building at the intersection of hardware and software \u2014 embedded systems, simulation, and real-time data.";
+  "MEng Aerospace Engineering student at Heriot-Watt University and technical co-founder of PackSync. Projects in simulation, instrumentation and software.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -30,7 +30,6 @@ export const metadata: Metadata = {
     "aerospace engineering",
     "embedded systems",
     "Heriot-Watt",
-    "Edinburgh",
     "portfolio",
     "Maksymilian Dubowski",
   ],
@@ -58,15 +57,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        {/* Scroll-reveal is JS-driven: framer-motion server-renders the hidden
-            state as an inline opacity:0. Without JS that content never appears,
-            so force it visible when scripts don't run. */}
-        <noscript>
-          <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
-        </noscript>
-      </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+        <a href="#main-content" className="portfolio-button sr-only z-60 focus:not-sr-only focus:fixed focus:top-3 focus:left-4">
+          Skip to content
+        </a>
         {children}
         <Analytics />
         <SpeedInsights />

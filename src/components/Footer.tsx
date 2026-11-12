@@ -1,41 +1,16 @@
-"use client";
-
-import { FadeIn } from "./MotionPrimitives";
 import { SOCIAL } from "@/lib/links";
 
 export default function Footer() {
   return (
-    <footer className="py-12 px-6 border-t border-border">
-      <FadeIn>
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted/60">
-            © {new Date().getFullYear()} Maksymilian Dubowski. Edinburgh,
-            Scotland.
-          </p>
-
-          <div className="flex items-center gap-5">
-            {[
-              { label: "LinkedIn", href: SOCIAL.linkedin },
-              { label: "GitHub", href: SOCIAL.github },
-              { label: "Email", href: SOCIAL.email },
-            ].map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.href.startsWith("http") ? "_blank" : undefined}
-                rel={
-                  link.href.startsWith("http")
-                    ? "noopener noreferrer"
-                    : undefined
-                }
-                className="text-xs text-muted/50 hover:text-accent transition-colors duration-200"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
+    <footer className="border-t border-border px-5 py-7 sm:px-6">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-5 gap-y-3">
+        <p className="text-sm text-muted">© {new Date().getFullYear()} Maksymilian Dubowski</p>
+        <div className="flex flex-wrap items-center gap-4">
+          <a href={SOCIAL.linkedin} className="portfolio-link">LinkedIn</a>
+          <a href={SOCIAL.github} className="portfolio-link">GitHub</a>
+          <a href={SOCIAL.email} className="portfolio-link">Email</a>
         </div>
-      </FadeIn>
+      </div>
     </footer>
   );
 }

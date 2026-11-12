@@ -1,7 +1,6 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL!;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,6 +22,8 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Send notification to site owner
     const { error: notifyError } = await resend.emails.send({

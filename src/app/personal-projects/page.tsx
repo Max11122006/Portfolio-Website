@@ -1,49 +1,37 @@
-"use client";
-
+import type { Metadata } from "next";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { FadeIn, StaggerContainer, StaggerItem } from "@/components/MotionPrimitives";
 import ProjectCard from "@/components/ProjectCard";
 import { allProjects } from "@/data/projects";
 
+export const metadata: Metadata = {
+  title: "Projects | Max Dubowski",
+  description: "Engineering, software and hands-on projects by Maksymilian Dubowski.",
+  alternates: { canonical: "/personal-projects" },
+};
+
 export default function PersonalProjectsPage() {
   return (
-    <main className="bg-background min-h-screen">
+    <>
       <Navbar />
-
-      <section className="pt-32 pb-24 md:pb-36 px-6">
-        <div className="fixed inset-0 schematic-grid pointer-events-none opacity-50" />
-
-        <div className="relative max-w-6xl mx-auto">
-          <FadeIn>
-            <p className="text-xs tracking-[0.25em] uppercase text-muted mb-6 font-mono">
-              {"// ALL_PROJECTS"}
-            </p>
-          </FadeIn>
-
-          <FadeIn delay={0.1}>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15] text-foreground mb-4">
-              The <span className="text-accent">Workshop.</span>
-            </h1>
-            <p className="text-base text-muted mb-16 max-w-xl">
-              Every project I&apos;ve built, broken, and learned from — software, hardware, and everything in between.
-            </p>
-          </FadeIn>
-
-          <StaggerContainer
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-            staggerDelay={0.08}
-          >
+      <main id="main-content" tabIndex={-1} className="relative isolate min-h-screen px-5 py-14 sm:px-6 sm:py-20">
+        <div aria-hidden="true" className="schematic-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-72" />
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 sm:mb-10">
+            <h1 className="portfolio-heading">All projects</h1>
+            <Link href="/github" className="portfolio-link">
+              Browse source code <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 sm:gap-6">
             {allProjects.map((project) => (
-              <StaggerItem key={project.slug}>
-                <ProjectCard project={project} headingLevel={2} />
-              </StaggerItem>
+              <ProjectCard key={project.slug} project={project} headingLevel={2} archive />
             ))}
-          </StaggerContainer>
+          </div>
         </div>
-      </section>
-
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }

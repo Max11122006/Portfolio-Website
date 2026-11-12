@@ -5,10 +5,6 @@
  * public/projects/. Nothing else needs touching: `featured` and `order` drive
  * both the homepage selection and the workshop list.
  *
- * The current `order` arrangement is PROVISIONAL — a placeholder ranking, not a
- * settled editorial decision. Renumbering is a one-line change per entry and
- * needs no component changes.
- *
  * A field still awaiting copy is an empty string, with a TODO(copy) marker in a
  * trailing comment. Comments do not survive into the production bundle, so the
  * marker can never reach the browser, while scripts/check-copy.mjs still reports
@@ -47,10 +43,11 @@ export interface Project {
   image: string;
   imageAlt: string;
   /** Optional larger image for the detail route. */
-  heroImage?: string;
+  heroImage?: { src: string; width: number; height: number };
 
   links: {
     demo?: string;
+    website?: string;
     repo?: string;
   };
 
@@ -63,11 +60,60 @@ export interface Project {
   sections?: ProjectSection[];
 }
 
-const WIRE_COLORS = ["red", "blue", "green", "yellow", "orange", "purple"];
-
-export { WIRE_COLORS };
-
 const projects: Project[] = [
+  {
+    slug: "packsync",
+    title: "PackSync",
+    category: "Startup · Full-stack software",
+    date: "September 2026 – present",
+    hook: "A platform that helps UK drinks producers work out their packaging obligations and prepare the data they need to report.",
+    problem:
+      "A drinks producer can have hundreds of products, each with its own bottle or can, closure and outer packaging. Calculating obligations means combining those component weights with sales volumes, then reshaping the same data for different reporting schemes.",
+    approach:
+      "As technical co-founder and software engineer, I built a Next.js and TypeScript application that takes packaging specifications and turns them into obligation estimates and reporting outputs. I implemented calculation logic for material streams and fee schedules, and used Resend for automated client notifications.",
+    outcome:
+      "The public site includes an interactive obligation calculator and sample reporting outputs. Producers can see how a set of product packaging specifications maps to a DEFRA reporting CSV and an article-list payload for the Deposit Return Scheme.",
+    tags: ["Next.js", "TypeScript", "Compliance tooling", "Tailwind CSS", "Resend", "Vercel"],
+    image: "/projects/packsync.jpg",
+    imageAlt: "PackSync’s public packaging obligation calculator showing sample producer and packaging inputs.",
+    heroImage: { src: "/projects/packsync.jpg", width: 1280, height: 720 },
+    links: { website: "https://www.packsync.co.uk/" },
+    featured: true,
+    order: 1,
+  },
+  {
+    slug: "backed",
+    title: "BACKED",
+    category: "Hackathon · Applied AI",
+    date: "July 2026",
+    hook: "A study accountability prototype that uses Gemma 4 to run a simulated prediction market. Second place at Build with Gemma.",
+    problem:
+      "Our hackathon brief was to build a study companion that helps people follow through on work they put off. We wanted the app to notice a stalled session and suggest a small next step while there was still time to finish.",
+    approach:
+      "I helped build the Python backend and its Gemini API integration. We gave Gemma 4 three separate jobs: price a study commitment from prior sessions, suggest a next action when the student goes idle, and assess photographed work at the end. The Python engine handles settlement arithmetic.",
+    outcome:
+      "We built the prototype at GDGoC Aberdeen’s Build with Gemma hackathon and placed second. The sprint demo uses simulated participants and includes a scripted mode that runs without the model backend.",
+    tags: ["Python", "Gemma 4", "Gemini API", "Vanilla JavaScript", "Multimodal AI"],
+    image: "/projects/backed.jpg",
+    imageAlt: "BACKED’s local demo showing a thermodynamics study commitment, a falling probability chart and simulated Yes and No trades.",
+    heroImage: { src: "/projects/backed.jpg", width: 1280, height: 720 },
+    links: { repo: repoUrl("BACKED-google-hackathon", "AdamAzeb") },
+    featured: true,
+    order: 2,
+    sections: [
+      {
+        heading: "Team & event",
+        body: ["Built with Adam Azeb and Abdulwahid Yaich on 26 July 2026 at Build with Gemma, hosted by GDGoC Aberdeen."],
+      },
+      {
+        heading: "Backend & fallbacks",
+        body: [
+          "The Python standard-library server handles model calls and market state. A lightweight JavaScript frontend renders the study session, market and leaderboard.",
+          "Responses are cached by input hash, requests use exponential backoff on rate limits, and the frontend can fall back to scripted responses.",
+        ],
+      },
+    ],
+  },
   {
     slug: "beam-deflection-rig",
     title: "Beam Deflection Measurement Rig",
@@ -86,7 +132,7 @@ const projects: Project[] = [
       "Cantilever bending rig on an aluminium extrusion frame: an orange brass beam clamped at one end, a servo motor applying load at the free end, with an HX711 amplifier and Arduino Uno wired on a breadboard alongside.",
     links: { repo: repoUrl("Bending-Beam-Max") },
     featured: true,
-    order: 3,
+    order: 4,
     sections: [
       {
         heading: "Rig & Instrumentation",
@@ -139,8 +185,8 @@ const projects: Project[] = [
     imageAlt:
       "Dark command-centre dashboard: a world map with clustered tanker markers and highlighted conflict zones, an oil price ticker across the top, a scrolling maritime intel feed on the right, and a chokepoint status strip along the bottom.",
     links: { repo: repoUrl("crude-flow") },
-    featured: true,
-    order: 1,
+    featured: false,
+    order: 5,
     sections: [
       {
         heading: "System Design",
@@ -197,10 +243,10 @@ const projects: Project[] = [
     image: "/projects/3d-printing.jpg",
     imageAlt:
       "A modified Ender 3 V2 on a workbench mid-setup: filament spool at the left, LED bar across the top of the frame, touchscreen controller at the right, scrapers and printed parts around the base.",
-    heroImage: "/projects/3d-printing.jpg",
+    heroImage: { src: "/projects/3d-printing.jpg", width: 2921, height: 2705 },
     links: {},
-    featured: true,
-    order: 4,
+    featured: false,
+    order: 7,
     sections: [
       {
         heading: "BLTouch Auto Bed Levelling",
@@ -267,7 +313,7 @@ const projects: Project[] = [
       "Ground-to-air intercept simulation: several coloured missile trails curving through a 3-D graph space with labelled range, lateral and altitude axes, converging on amber intercept bursts around a red aircraft icon, beside a telemetry panel listing fleet status, hits and camera angles.",
     links: { repo: repoUrl("missile-trajectory-tracker") },
     featured: true,
-    order: 2,
+    order: 3,
     sections: [
       {
         heading: "Guidance",
@@ -320,10 +366,10 @@ const projects: Project[] = [
     image: "/projects/honda-civic.jpg",
     imageAlt:
       "The open engine bay of the Honda Civic, showing the intake manifold, wiring looms and hoses, and a battery with newly fitted red and black terminal leads.",
-    heroImage: "/projects/honda/hero.jpg",
+    heroImage: { src: "/projects/honda/hero.jpg", width: 3000, height: 2153 },
     links: {},
-    featured: true,
-    order: 6,
+    featured: false,
+    order: 8,
     sections: [
       {
         heading: "Custom Head Unit Installation",
@@ -380,8 +426,8 @@ const projects: Project[] = [
     imageAlt:
       "Friendly app interface showing a group page with member availability, ranked meetup time suggestions, and a map with live member locations.",
     links: { repo: repoUrl("friendly", "AdamAzeb") },
-    featured: true,
-    order: 5,
+    featured: false,
+    order: 6,
     sections: [
       {
         heading: "Core Concept",
@@ -438,7 +484,7 @@ const projects: Project[] = [
       "A weather radar composite of a large spiral storm system over the Gulf coast, rainfall intensity shaded from blue through green and yellow to red around the eye, with city names marked.",
     links: { repo: repoUrl("stormwatch-ai") },
     featured: false,
-    order: 7,
+    order: 9,
     sections: [
       {
         heading: "Approach",
@@ -473,20 +519,20 @@ const projects: Project[] = [
     title: "Engineering Portfolio Website",
     category: "Software & Web",
     date: "February 2026 – ongoing",
-    hook: "The site you're reading: an engineering portfolio built as its own worked example rather than assembled from a template.",
+    hook: "This portfolio brings my engineering projects, experience and CV together for internship applications.",
     problem:
-      "A portfolio has to be memorable enough that someone remembers whose it was, and plain enough that it never gets in the way of the projects. Templates give up the first to guarantee the second.",
+      "A recruiter should be able to find my CV and understand what I built on a first visit. The original site’s animations and overlapping skills sections slowed down that path.",
     approach:
-      "Built the visual language out of the subject matter instead of decorating a template: a Solari split-flap board that flips the name into place, a Göttingen 386 airfoil with skill labels riding animated streamlines, project cards drawn as breadboards with jumper-wire tags, all on a graph-paper ground. Next.js App Router with TypeScript and Tailwind, Framer Motion for entrance and scroll animation, and the airfoil rendered as plain SVG with its streamlines computed in JavaScript rather than dropping to canvas.",
+      "I kept the Solari split-flap board and schematic grid as references to aviation and engineering. I moved the CV and selected work to the top and made the project pages share one data source. The stack is Next.js, TypeScript and Tailwind CSS.",
     outcome:
-      "Live, and the front door for internship applications. It has since been through a correctness pass that mattered more than the visuals: project cards that only revealed their imagery and links on hover — invisible on a phone — now show both without hovering, unoptimised photographs that accounted for most of the page weight were routed through the image pipeline, and missing heading structure and reduced-motion support were added. Several project write-ups are still being written.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "SVG Animation", "Vercel"],
+      "The homepage surfaces four case studies and a direct CV download. The project archive uses the same records as the detail pages, and readers can see project images and links on touchscreens, with a keyboard or with reduced motion enabled.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "SVG", "Vercel"],
     image: "/projects/portfolio-website.jpg",
     imageAlt:
-      "This portfolio's home page: the split-flap board spelling MAKSYMILIAN DUBOWSKI above BENG AEROSPACE ENGINEERING, on a pale graph-paper background.",
+      "Portfolio homepage showing the split-flap name and MEng Aerospace Engineering above the project and CV links.",
     links: { repo: repoUrl("Portfolio-Website") },
     featured: false,
-    order: 8,
+    order: 10,
     sections: [
       {
         heading: "Design Goals",
@@ -502,8 +548,7 @@ const projects: Project[] = [
         body: [
           "Next.js 16 with App Router and TypeScript.",
           "Tailwind CSS v4 for utility-first styling.",
-          "Framer Motion for scroll-driven and entrance animation.",
-          "An SVG airfoil with streamlines computed in JavaScript — no canvas.",
+          "A brief CSS split-flap reveal with a static display under reduced motion.",
           "Vercel deployment with Analytics and Speed Insights.",
         ],
       },
@@ -511,7 +556,7 @@ const projects: Project[] = [
         heading: "Key Features",
         body: [
           "A Solari flip-board hero that flips the name into place.",
-          "A Göttingen 386 airfoil with skill labels riding animated streamlines.",
+          "Technical skills grouped with links to projects that put them into practice.",
           "Project cards that show their imagery and links without hover, so they work on touch.",
           "A contact form wired through the Resend API.",
           "Reduced-motion support throughout, and images served through the Next image pipeline.",

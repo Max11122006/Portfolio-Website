@@ -1,116 +1,73 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
-import BreadboardCard from "./BreadboardCard";
-import { type Project, WIRE_COLORS } from "@/data/projects";
-
-const LINK_CLASS =
-  "inline-flex items-center gap-1.5 py-2.5 text-xs font-mono tracking-wide uppercase text-accent rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface";
-
-const ARROW = (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M2.5 6h7M6.5 3l3 3-3 3" />
-  </svg>
-);
+import type { Project } from "@/data/projects";
 
 export default function ProjectCard({
   project,
   headingLevel = 3,
+  archive = false,
 }: {
   project: Project;
-  /** 3 under a section heading (home page), 2 where cards sit directly under the h1. */
   headingLevel?: 2 | 3;
+  archive?: boolean;
 }) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
+  const href = `/projects/${project.slug}`;
 
   return (
-    <div className="group relative h-full">
-      <BreadboardCard className="h-full" hover>
-        <div className="p-7 md:p-8 pt-7 pb-7 flex flex-col h-full">
-          {/* Screenshot — part of the resting state, no hover required */}
-          <div className="relative aspect-[16/9] w-full mb-6 overflow-hidden rounded-md border border-border bg-surface-alt">
-            <Image
-              src={project.image}
-              alt={project.imageAlt}
-              fill
-              className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
-              sizes="(min-width: 1200px) 500px, (min-width: 768px) calc(50vw - 5rem), calc(100vw - 6.5rem)"
-            />
-          </div>
-
-          {/* Eyebrow: category · date */}
-          <p className="text-[11px] tracking-[0.2em] uppercase text-accent/70 font-medium mb-4">
-            {project.category}
-            {project.date && (
-              <>
-                <span className="mx-2 text-muted/50">·</span>
-                {project.date}
-              </>
-            )}
-          </p>
-
-          <Heading className="text-lg font-semibold text-foreground mb-3 leading-snug">
+    <article className="group relative flex h-full flex-col rounded-xl border border-border bg-surface transition-colors hover:border-accent/70">
+      <div className="relative aspect-video overflow-hidden rounded-t-[11px] border-b border-border bg-surface-alt">
+        <Image
+          src={project.image}
+          alt={project.imageAlt}
+          fill
+          className="object-cover"
+          sizes={archive
+            ? "(min-width: 1024px) 360px, (min-width: 768px) 46vw, 94vw"
+            : "(min-width: 1152px) 540px, (min-width: 768px) 46vw, 94vw"}
+        />
+      </div>
+      <div className="flex flex-1 flex-col px-5 py-5 sm:px-6">
+        <p className="mb-2 font-mono text-xs tracking-wide text-muted">
+          {project.category}{project.date && ` · ${project.date}`}
+        </p>
+        <Heading className="text-xl font-semibold tracking-tight sm:text-2xl">
+          <Link
+            href={href}
+            className="rounded-sm after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-accent"
+          >
             {project.title}
-          </Heading>
-
-          {project.hook && (
-            <p className="text-sm text-muted leading-relaxed mb-4">{project.hook}</p>
+          </Link>
+        </Heading>
+        {project.hook && <p className="mt-2 text-sm leading-relaxed text-muted sm:text-base">{project.hook}</p>}
+        <ul aria-label="Tools and techniques" className="mt-4 flex flex-wrap gap-1.5">
+          {project.tags.slice(0, 3).map((tag) => (
+            <li key={tag} className="rounded border border-border bg-background px-2 py-1 font-mono text-xs text-muted">
+              {tag}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-5 text-sm">
+          <span aria-hidden="true" className="font-semibold text-accent group-hover:underline group-focus-within:underline">
+            View case study →
+          </span>
+          {project.links.website && (
+            <a href={project.links.website} aria-label={`Visit the ${project.title} website`} className="portfolio-link relative z-10">
+              Website
+            </a>
           )}
-
-          <div className="flex flex-wrap gap-2 mt-auto">
-            {project.tags.map((tag, i) => (
-              <span
-                key={tag}
-                className={`jumper-wire jumper-wire--${WIRE_COLORS[i % WIRE_COLORS.length]}`}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Links — always rendered, tappable without hover */}
-          <div className="flex items-center gap-5 mt-6 pt-1.5 border-t border-border-light">
-            {/* The ::after stretches this link over the whole card, so the card
-                stays clickable as a unit without hiding the link itself. */}
-            <Link
-              href={`/projects/${project.slug}`}
-              className={`${LINK_CLASS} after:absolute after:inset-0 after:content-['']`}
-            >
-              View Project
-              {ARROW}
-            </Link>
-
-            {project.links.demo && (
-              <a
-                href={project.links.demo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${LINK_CLASS} relative z-10`}
-                aria-label={`${project.title} live demo`}
-              >
-                Demo
-                {ARROW}
-              </a>
-            )}
-
-            {project.links.repo && (
-              <a
-                href={project.links.repo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${LINK_CLASS} relative z-10`}
-                aria-label={`${project.title} source code on GitHub`}
-              >
-                GitHub
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                </svg>
-              </a>
-            )}
-          </div>
+          {project.links.demo && (
+            <a href={project.links.demo} aria-label={`${project.title} demo`} className="portfolio-link relative z-10">
+              Demo
+            </a>
+          )}
+          {project.links.repo && (
+            <a href={project.links.repo} aria-label={`${project.title} on GitHub`} className="portfolio-link relative z-10">
+              GitHub
+            </a>
+          )}
         </div>
-      </BreadboardCard>
-    </div>
+      </div>
+    </article>
   );
 }
